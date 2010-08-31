@@ -1,2 +1,5 @@
 * un-distort camera image
 * integrate info about oscilloscope state
+* separate capturing from display
+* compensate for shift
+   for each sample store its value (i.e. y value), id (i.e. x value), and position(in mm, real cable, depends on display offset).
