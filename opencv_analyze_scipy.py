@@ -6,6 +6,7 @@ from scipy import interpolate, misc, fftpack, signal
 
 import datetime
 import os
+import tone
 
 import sys
 from PyQt4 import QtGui
@@ -128,8 +129,9 @@ calibrated = zeros(640)
 calibration = zeros(640)
 
 corrSample = zeros(50)
-
 sc = abs(sinc(arange(0-320,640-210),0.03))
+
+synth = tone.Synth()
 
 while True:
 	#CAPTURE
@@ -207,6 +209,15 @@ while True:
 			cv.Line(imageColor, (i,0), (i,480), (75,75,150))
 		#SHOW
 		cv.ShowImage("TDR",imageColor)
+
+        # play sound: 
+        if len(detected) == 1:
+            percentage = float(detected[0] - display[0]) / float(display[1] - display[0])
+            tone = 440 + 440 * percentage
+            synth.start()
+            synth.set(tone)
+        else:
+            synth.stop()
 		
 	#autoCalibrate
 	calibrationTimer += 1
