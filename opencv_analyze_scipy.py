@@ -134,6 +134,8 @@ sc = abs(sinc(arange(0-320,640-210),0.03))
 synth = tone.Synth(3)
 synth.start()
 
+play_sound = False
+
 while True:
 	#CAPTURE
 	img = cv.QueryFrame(cap)
@@ -211,14 +213,15 @@ while True:
 		#SHOW
 		cv.ShowImage("TDR",imageColor)
 
-        # play sound: 
-        if len(detected) > 0:
-            for touch in range(len(detected)):
-               percentage = float(detected[touch] - display[0]) / float(display[1] - display[0])
-               tone = 440 + 440 * percentage
-               synth.set(touch, tone)
-        else:
-            synth.clear()
+        if play_sound == True:
+            # play sound: 
+            if len(detected) > 0:
+                for touch in range(len(detected)):
+                   percentage = float(detected[touch] - display[0]) / float(display[1] - display[0])
+                   tone = 440 + 440 * percentage
+                   synth.set(touch, tone)
+            else:
+                synth.clear()
 		
 	#autoCalibrate
 	calibrationTimer += 1

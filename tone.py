@@ -5,7 +5,7 @@ from pyeca import *
 class Synth:
     def __init__(self, channels=1):
         self.channels = channels
-        self.e = ECA_CONTROL_INTERFACE()
+        self.e = ECA_CONTROL_INTERFACE(0)
         self.e.command("cs-add play_chainsetup")
         selected=""
         for i in range(channels):
@@ -17,7 +17,7 @@ class Synth:
         self.e.command("c-select-all")
         self.e.command("ao-add /dev/dsp")
         self.e.command("cs-connect")
-        print self.e.command("c-status")
+        #print self.e.command("c-status")
 
     def start(self):
         self.e.command("start")
