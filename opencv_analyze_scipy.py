@@ -131,7 +131,8 @@ calibration = zeros(640)
 corrSample = zeros(50)
 sc = abs(sinc(arange(0-320,640-210),0.03))
 
-synth = tone.Synth()
+synth = tone.Synth(3)
+synth.start()
 
 while True:
 	#CAPTURE
@@ -211,13 +212,13 @@ while True:
 		cv.ShowImage("TDR",imageColor)
 
         # play sound: 
-        if len(detected) == 1:
-            percentage = float(detected[0] - display[0]) / float(display[1] - display[0])
-            tone = 440 + 440 * percentage
-            synth.start()
-            synth.set(tone)
+        if len(detected) > 0:
+            for touch in range(len(detected)):
+               percentage = float(detected[touch] - display[0]) / float(display[1] - display[0])
+               tone = 440 + 440 * percentage
+               synth.set(touch, tone)
         else:
-            synth.stop()
+            synth.clear()
 		
 	#autoCalibrate
 	calibrationTimer += 1
