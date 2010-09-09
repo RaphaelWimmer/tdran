@@ -141,7 +141,6 @@ play_sound = False
 
 while True:
 	#CAPTURE
-	#img = cv.QueryFrame(cap)
 	img = source.next()
 	
 	if pause == 0:
