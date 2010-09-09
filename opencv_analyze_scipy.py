@@ -105,8 +105,11 @@ cv.SetMouseCallback("TDR", on_mouse,0)
 
 app = QtGui.QApplication(sys.argv)
 
-# initialize video camera
-source = ImageSource.ImageSource("../../headphone_test-20100909-012031-414/0000000000.png")
+# initialize data source
+if len(sys.argv) > 1:
+    source = ImageSource.ImageSource(sys.argv[1])
+else:
+    source = VideoSource.VideoSource()
 
 imageColor = cv.CreateImage([640,480], cv.IPL_DEPTH_8U, 3)
 
