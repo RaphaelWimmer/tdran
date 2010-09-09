@@ -11,6 +11,9 @@ import tone
 import sys
 from PyQt4 import QtGui
 
+import VideoSource
+import ImageSource
+
 def discreteDerivative(trace):
 	return trace - roll(trace,1,0)
 
@@ -102,11 +105,9 @@ cv.SetMouseCallback("TDR", on_mouse,0)
 
 app = QtGui.QApplication(sys.argv)
 
-#Capturing
-cap = cv.CaptureFromCAM(0)
-cv.SetCaptureProperty(cap, cv.CV_CAP_PROP_FPS, 30)
+# initialize video camera
+source = ImageSource.ImageSource("../../headphone_test-20100909-012031-414/0000000000.png")
 
-#Imaging
 imageColor = cv.CreateImage([640,480], cv.IPL_DEPTH_8U, 3)
 
 #Global
@@ -132,13 +133,13 @@ corrSample = zeros(50)
 sc = abs(sinc(arange(0-320,640-210),0.03))
 
 synth = tone.Synth(3)
-synth.start()
 
 play_sound = False
 
 while True:
 	#CAPTURE
-	img = cv.QueryFrame(cap)
+	#img = cv.QueryFrame(cap)
+	img = source.next()
 	
 	if pause == 0:
 		cv.CvtColor(img, imageColor, cv.CV_GRAY2RGB)
@@ -215,6 +216,7 @@ while True:
 
         if play_sound == True:
             # play sound: 
+            synth.start()
             if len(detected) > 0:
                 for touch in range(len(detected)):
                    percentage = float(detected[touch] - display[0]) / float(display[1] - display[0])
