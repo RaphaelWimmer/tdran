@@ -5,6 +5,7 @@ from numpy import *
 from scipy import interpolate, misc, fftpack, signal
 
 import datetime
+import time
 import os
 import tone
 
@@ -57,7 +58,8 @@ def analyzeImage(image, mask):
 				trace.append(maxLocY)
 				xv.append(x)
 			else:
-				print "Caught defect pixel: " + x
+				#print "Caught defect pixel: " + str(x)
+				pass
 	return array(xv), array(trace)
 
 def printTrace(trace, image, color, visible, shift=0, scale=1):
@@ -143,8 +145,10 @@ synth = tone.Synth(3)
 
 play_sound = False
 
+new_time = datetime.datetime.now()
 while True:
 	#CAPTURE
+	old_time = new_time
 	img = source.next()
 	
 	if pause == 0:
@@ -305,5 +309,13 @@ while True:
 		print "Saving image: '" + filename + "'"
 		cv.SaveImage(filename, imageColor)
 
+	new_time = datetime.datetime.now()
+	timediff = new_time - old_time
+	if timediff.seconds == 0 and timediff.microseconds < 30000:
+		print "Sleeping %d microseconds" % timediff.microseconds
+		time.sleep((30000.0 - timediff.microseconds) / 1000000.0)
+	else:
+		print "needed %d microseconds" % timediff.microseconds
+    
 #Release & Destroy
 cv.DestroyAllWindows()
