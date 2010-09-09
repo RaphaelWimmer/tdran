@@ -46,6 +46,8 @@ def drawGrid(image):
     #threshold
     cv.Line(image, (0,240+threshold[0]), (640,240+threshold[0]), (128,128,128))
 
+
+
 def analyzeImage(image, mask):
     trace = []
     xv = []
@@ -141,9 +143,10 @@ calibration = zeros(640)
 corrSample = zeros(50)
 sc = abs(sinc(arange(0-320,640-210),0.03))
 
-synth = tone.Synth(3)
 
 play_sound = False
+if play_sound:
+    synth = tone.Synth(3)
 
 new_time = datetime.datetime.now()
 while True:
@@ -168,8 +171,8 @@ while True:
         xa = arange(0,640) 
         interpolated = f(xa)
         
-        #moving average
-        avg =signal.fftconvolve(interpolated, kernel(5), mode='same')
+        #moving average - use a kernel with equal weights
+        avg = signal.fftconvolve(interpolated, kernel(5), mode='same')
         
         #time average
         history = roll(history, -1, 0)
@@ -311,11 +314,10 @@ while True:
 
     new_time = datetime.datetime.now()
     timediff = new_time - old_time
-    if timediff.seconds == 0 and timediff.microseconds < 30000:
-        print "Sleeping %d microseconds" % timediff.microseconds
-        time.sleep((30000.0 - timediff.microseconds) / 1000000.0)
-    else:
-        print "needed %d microseconds" % timediff.microseconds
+
+    # ensure max 20 fps
+    if timediff.seconds == 0 and timediff.microseconds < 50000:
+        time.sleep((50000.0 - timediff.microseconds) / 1000000.0)
     
 #Release & Destroy
 cv.DestroyAllWindows()
