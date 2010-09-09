@@ -14,8 +14,10 @@ from PyQt4 import QtGui
 import VideoSource
 import ImageSource
 
+
 def discreteDerivative(trace):
 	return trace - roll(trace,1,0)
+
 
 def filterMovingAverage(trace, size):
 	filtered = list(trace)
@@ -36,12 +38,12 @@ def drawGrid(image):
 		pts.append([(0,i), (640,i)])
 	cv.PolyLine(image, pts, 0, (50,50,50))
 	#baseline
-	cv.Line(imageColor, (display[0],240), (display[1],240), (255,255,255))
+	cv.Line(image, (display[0],240), (display[1],240), (255,255,255))
 	#range
-	cv.Line(imageColor, (display[0],0), (display[0],480), (0,255,0))
-	cv.Line(imageColor, (display[1],0), (display[1],480), (0,0,255))
+	cv.Line(image, (display[0],0), (display[0],480), (0,255,0))
+	cv.Line(image, (display[1],0), (display[1],480), (0,0,255))
 	#threshold
-	cv.Line(imageColor, (0,240+threshold[0]), (640,240+threshold[0]), (128,128,128))
+	cv.Line(image, (0,240+threshold[0]), (640,240+threshold[0]), (128,128,128))
 
 def analyzeImage(image, mask):
 	trace = []
@@ -50,10 +52,12 @@ def analyzeImage(image, mask):
 	for x in range(0,640):
 		column = cv.GetCol(image, x)
 		(minVal,maxVal,minLoc,(maxLocX,maxLocY)) = cv.MinMaxLoc(column)
-		if maxVal > 100 and maxLocY > 1:
-			if not ((x,maxLocY) in mask):
+		if maxVal > 100 and maxLocY > 1: # timestamp in upper left corner of image would interfere
+			if not ((x,maxLocY) in mask): #mask?
 				trace.append(maxLocY)
 				xv.append(x)
+			else:
+				print "Caught defect pixel: " + x
 	return array(xv), array(trace)
 
 def printTrace(trace, image, color, visible, shift=0, scale=1):
