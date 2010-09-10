@@ -44,7 +44,7 @@ def drawGrid(image):
     cv.Line(image, (display[0],0), (display[0],480), (0,255,0))
     cv.Line(image, (display[1],0), (display[1],480), (0,0,255))
     #threshold
-    cv.Line(image, (0,240+threshold[0]), (640,240+threshold[0]), (128,128,128))
+    cv.Line(image, (0,240+threshold), (640,240+threshold), (128,128,128))
 
 
 
@@ -79,7 +79,7 @@ def on_mouse(event, x, y, flags, param):
     if event == cv.CV_EVENT_LBUTTONUP:
         if x > display[0]: display[1] = x
     if event == cv.CV_EVENT_RBUTTONDOWN:
-        threshold[0] = y - 240
+        threshold = y - 240
         print "threshold" + str(threshold)
 
 def sinc(i,f):
@@ -93,14 +93,14 @@ def autorange(calibrated):
     last = 640
     for i in range(0,640):
         #find first silence
-        if calibrated[i] > threshold[0] / 5:
+        if calibrated[i] > threshold / 5:
             first = i
         if i > first + 100:
             break
     first = first + 10
     for i in range(first,640):
         #find last silence
-        if calibrated[i] > threshold[0] / 5:
+        if calibrated[i] > threshold / 5:
             last = i
             break
     last = last - 10
@@ -110,7 +110,6 @@ def autorange(calibrated):
 #GUI
 window = cv.NamedWindow("TDR", cv.CV_WINDOW_AUTOSIZE)
 cv.SetMouseCallback("TDR", on_mouse,0)
-
 app = QtGui.QApplication(sys.argv)
 
 # initialize data source
@@ -123,7 +122,45 @@ imageColor = cv.CreateImage([640,480], cv.IPL_DEPTH_8U, 3)
 
 #Global
 display=[0,639]
-threshold = [30]
+
+threshold = 30
+def change_threshold(val):
+    global threshold 
+    threshold = val
+cv.CreateTrackbar("Threshold", "TDR", threshold, 50, change_threshold)
+
+alteration_average = 30
+def change_alteration_average(val):
+    global alteration_average 
+    alteration_average = val+1
+cv.CreateTrackbar("Alteration Average", "TDR", alteration_average, 50, change_alteration_average)
+
+time_average = 10
+def change_time_average(val):
+    global time_average
+    global history 
+    time_average = val+2 
+    history = zeros([time_average,640])
+cv.CreateTrackbar("Time Average", "TDR", time_average, 50, change_time_average)
+
+trace_average = 5
+def change_trace_average(val):
+    global trace_average
+    trace_average = val+1
+cv.CreateTrackbar("Trace Average", "TDR", trace_average, 50, change_trace_average)
+
+mask_average = 15
+def change_mask_average(val):
+    global mask_average
+    mask_average = val+1
+cv.CreateTrackbar("Mask Average", "TDR", mask_average, 50, change_mask_average)
+
+derivative_average = 10
+def change_derivative_average(val):
+    global derivative_average
+    derivative_average = val+1
+cv.CreateTrackbar("Derivative Average", "TDR", derivative_average, 50, change_derivative_average)
+
 shot = 0
 pause = 0
 grid = 1
@@ -136,7 +173,7 @@ markers = []
 topicName = ""
 
 calibrationTimer = 0
-history = zeros([25,640])
+history = zeros([time_average,640])
 calibrated = zeros(640)
 calibration = zeros(640)
 
@@ -172,20 +209,20 @@ while True:
         interpolated = f(xa)
         
         #moving average - use a kernel with equal weights
-        avg = signal.fftconvolve(interpolated, kernel(5), mode='same')
+        avg = signal.fftconvolve(interpolated, kernel(trace_average), mode='same')
         
         #time average
         history = roll(history, -1, 0)
         history[-1] = interpolated
 
         alterationSpeed = abs(history[-1] - history[-2])
-        alterationSpeed = signal.fftconvolve(alterationSpeed, ones(30)/30, mode='same')
+        alterationSpeed = signal.fftconvolve(alterationSpeed, ones(alteration_average)/alteration_average, mode='same')
         
-        maskAlteration = where(alterationSpeed > threshold[0] / 3, 1, 0)
+        maskAlteration = where(alterationSpeed > threshold / 3, 1, 0)
         maskStatic = where(maskAlteration, 0, 1)
         
-        maskAlteration = signal.fftconvolve(maskAlteration, kernel(15), mode='same')
-        maskStatic = signal.fftconvolve(maskStatic, kernel(15), mode='same')
+        maskAlteration = signal.fftconvolve(maskAlteration, kernel(mask_average), mode='same')
+        maskStatic = signal.fftconvolve(maskStatic, kernel(mask_average), mode='same')
 
         history = history * maskStatic + avg*maskAlteration
         
@@ -199,7 +236,7 @@ while True:
         calibrated = filtered - calibration
         
         #derivative
-        derivative = signal.fftconvolve(discreteDerivative(calibrated)*10, kernel(10), mode='same')
+        derivative = signal.fftconvolve(discreteDerivative(calibrated)*derivative_average, kernel(derivative_average), mode='same')
             
         #correlate
         #correlation = signal.correlate(calibrated, corrSample, mode='same')
@@ -208,16 +245,16 @@ while True:
         if detection == 1:
             detected = []
             for i in range(display[0], display[1]):
-                if ((calibrated[i] > threshold[0]) and ((derivative[i] > 0 and derivative[i+1] <= 0))): #or (derivative[i] >= 0 and derivative[i+1] < 0)
+                if ((calibrated[i] > threshold) and ((derivative[i] > 0 and derivative[i+1] <= 0))): #or (derivative[i] >= 0 and derivative[i+1] < 0)
                     cv.Line(imageColor, (i,0), (i,480), (255,255,255))
                     detected.append(i)
                     #os.system('beep -f 200 -l 0.1')
         
         #PRINT TRACES
         if traces == 1:
-            printTrace(interpolated, imageColor, (0,0,255), display)
+            printTrace(avg, imageColor, (0,0,255), display)
             printTrace(calibrated, imageColor, (0,255,0), display, shift=240)
-            printTrace(derivative, imageColor, (0,0,255), display, shift=240)
+            printTrace(derivative, imageColor, (255,0,0), display, shift=240)
             #printTrace(alterationSpeed, imageColor, (255,0,0), display, shift=300)
             #printTrace(maskAlteration, imageColor, (255,0,0), display, shift=300, scale=100)
             #printTrace(sc, imageColor, (255,0,0), display, shift=240, scale=300)
