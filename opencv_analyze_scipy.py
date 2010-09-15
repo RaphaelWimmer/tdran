@@ -107,10 +107,30 @@ def autorange(calibrated):
     display[0] = first
     display[1] = last 
 
+
+headphone_images = {}
+
+def initialize_headphone():
+    for name in ["no_touch", "play", "prev", "next"]:
+        headphone_images[name] = cv.LoadImage("headphones/" + name+".png")
+    set_headphone("no_touch")
+
+def set_headphone(mode):
+    cv.ShowImage("Headphones", headphone_images[mode])
+
+
+####################### START #####################
+
 #GUI
 window = cv.NamedWindow("TDR", cv.CV_WINDOW_AUTOSIZE)
 cv.SetMouseCallback("TDR", on_mouse,0)
 app = QtGui.QApplication(sys.argv)
+
+
+#mode = "headphone"
+mode = "analyze"
+if mode == "headphone":
+    cv.NamedWindow("Headphones", cv.CV_WINDOW_AUTOSIZE)
 
 # initialize data source
 if len(sys.argv) > 1:
@@ -186,6 +206,10 @@ if play_sound:
     synth = tone.Synth(3)
 
 new_time = datetime.datetime.now()
+
+if mode == "headphone":
+    initialize_headphone()
+
 while True:
     #CAPTURE
     old_time = new_time
@@ -274,6 +298,23 @@ while True:
                    synth.set(touch, tone)
             else:
                 synth.clear()
+        if mode == "headphone":
+            if len(detected) > 0:
+                for touch in range(len(detected)):
+                   percentage = float(detected[touch] - display[0]) / float(display[1] - display[0])
+                   if percentage < 0.3:
+                        print "Prev"
+                        set_headphone("prev")
+                   elif percentage < 0.6:
+                        print "Toggle Play/Pause"
+                        set_headphone("play")
+                   else:
+                        print "Next"
+                        set_headphone("next")
+            else:
+                set_headphone("no_touch")
+                #print "No Touch"
+
         
     #autoCalibrate
     calibrationTimer += 1
