@@ -129,6 +129,7 @@ app = QtGui.QApplication(sys.argv)
 
 #mode = "headphone"
 mode = "analyze"
+#mode = "piano"
 if mode == "headphone":
     cv.NamedWindow("Headphones", cv.CV_WINDOW_AUTOSIZE)
 
@@ -200,9 +201,7 @@ calibration = zeros(640)
 corrSample = zeros(50)
 sc = abs(sinc(arange(0-320,640-210),0.03))
 
-
-play_sound = False
-if play_sound:
+if mode == "piano":
     synth = tone.Synth(3)
 
 new_time = datetime.datetime.now()
@@ -288,7 +287,7 @@ while True:
         #SHOW
         cv.ShowImage("TDR",imageColor)
 
-        if play_sound == True:
+        if mode == "piano":
             # play sound: 
             synth.start()
             if len(detected) > 0:
