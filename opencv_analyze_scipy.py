@@ -15,6 +15,9 @@ from PyQt4 import QtGui
 import VideoSource
 import ImageSource
 
+from Xlib import XK
+import xk
+
 # DEFINES
 
 class Touch:
@@ -32,6 +35,23 @@ def process_touches(touches):
                synth.set(touch, tone)
         else:
             synth.clear()
+
+    if mode == "piano2":
+       global piano_map_old
+       piano_map_new = []
+       for touch in touches:
+           new_note = XK.XK_a + int(touch[Touch.PERCENTAGE] * (XK.XK_z - XK.XK_a))
+           piano_map_new.append(new_note)
+
+       for note in range(XK.XK_a, XK.XK_z):
+           if (note in piano_map_new) and not (note in piano_map_old):
+               print "press", note
+               xk.press_key(note)
+           if (note in piano_map_old) and not (note in piano_map_new):
+               xk.release_key(note)
+               print "release", note
+       piano_map_old = piano_map_new[:] # shallow copy
+
     if mode == "headphone":
         if len(touches) == 1:
             for touch in touches:
@@ -169,6 +189,10 @@ if mode == "piano":
     synth = tone.Synth(1)
     synth.start_synth()
     synth.clear()
+
+if mode == "piano2":
+    global piano_map_old
+    piano_map_old = []
 
 if mode == "headphone":
     cv.NamedWindow("Headphones", cv.CV_WINDOW_AUTOSIZE)

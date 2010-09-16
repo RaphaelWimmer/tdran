@@ -98,6 +98,46 @@ def char_to_keycode(ch) :
         shift_mask = 0
 
     return keycode, shift_mask
+        
+        
+        
+def press_key(keysym, shift_mask = 0) :
+    keycode = display.keysym_to_keycode(keysym)
+    if (UseXTest) :
+        if shift_mask != 0 :
+            Xlib.ext.xtest.fake_input(display, Xlib.X.KeyPress, 50)
+        Xlib.ext.xtest.fake_input(display, Xlib.X.KeyPress, keycode)
+    else :
+        event = Xlib.protocol.event.KeyPress(
+            time = int(time.time()),
+            root = display.screen().root,
+            window = window,
+            same_screen = 0, child = Xlib.X.NONE,
+            root_x = 0, root_y = 0, event_x = 0, event_y = 0,
+            state = shift_mask,
+            detail = keycode
+            )
+        window.send_event(event, propagate = True)
+    display.sync()
+
+def release_key(keysym, shift_mask = 0) :
+    keycode = display.keysym_to_keycode(keysym)
+    if (UseXTest) :
+        Xlib.ext.xtest.fake_input(display, Xlib.X.KeyRelease, keycode)
+        if shift_mask != 0 :
+            Xlib.ext.xtest.fake_input(display, Xlib.X.KeyRelease, 50)
+    else :
+        event = Xlib.protocol.event.KeyRelease(
+            time = int(time.time()),
+            root = display.screen().root,
+            window = window,
+            same_screen = 0, child = Xlib.X.NONE,
+            root_x = 0, root_y = 0, event_x = 0, event_y = 0,
+            state = shift_mask,
+            detail = keycode
+            )
+        window.send_event(event, propagate = True)
+    display.sync()
 
 def send_string(str) :
     for ch in str :
