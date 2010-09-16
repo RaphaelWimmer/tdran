@@ -15,10 +15,43 @@ from PyQt4 import QtGui
 import VideoSource
 import ImageSource
 
+# DEFINES
+
+class Touch:
+    POSITION = POS = 0
+    PERCENTAGE = PERC = 1
+    AMPLITUDE = AMP = 2
+
+def process_touches(touches):
+    # TODO: merge / clean up touches
+    if mode == "piano":
+        # play sound: 
+        if len(touches) > 0:
+            for touch in range(len(touches)):
+               tone = 440 + 440 * touches[touch][Touch.PERCENTAGE]
+               synth.set(touch, tone)
+        else:
+            synth.clear()
+    if mode == "headphone":
+        if len(touches) == 1:
+            for touch in touches:
+               if touch[Touch.PERCENTAGE] < 0.3:
+                    print "Prev"
+                    set_headphone("prev")
+               elif touch[Touch.PERCENTAGE] < 0.6:
+                    print "Toggle Play/Pause"
+                    set_headphone("play")
+               else:
+                    print "Next"
+                    set_headphone("next")
+        elif len(touches) > 1:
+            print "multiple touches"
+        else:
+            set_headphone("no_touch")
+            #print "No Touch"
 
 def discreteDerivative(trace):
     return trace - roll(trace,1,0)
-
 
 def filterMovingAverage(trace, size):
     filtered = list(trace)
@@ -127,10 +160,10 @@ cv.SetMouseCallback("TDR", on_mouse,0)
 app = QtGui.QApplication(sys.argv)
 
 
-#mode = "headphone"
-mode = "demo"
-#mode = "analyze"
-#mode = "piano"
+if len(sys.argv) > 1:
+    mode = sys.argv[1]
+else: 
+    mode = "analyze"
 
 if mode == "piano":
     synth = tone.Synth(1)
@@ -142,10 +175,11 @@ if mode == "headphone":
     initialize_headphone()
 
 # initialize data source
-if len(sys.argv) > 1:
-    source = ImageSource.ImageSource(sys.argv[1])
-else:
-    source = VideoSource.VideoSource()
+#if len(sys.argv) > 1:
+#    source = ImageSource.ImageSource(sys.argv[1])
+#else:
+#    source = VideoSource.VideoSource()
+source = VideoSource.VideoSource()
 
 imageColor = cv.CreateImage([640,480], cv.IPL_DEPTH_8U, 3)
 
@@ -274,7 +308,8 @@ while True:
             for i in range(display[0], display[1]):
                 if ((calibrated[i] > threshold) and ((derivative[i] > 0 and derivative[i+1] <= 0))): #or (derivative[i] >= 0 and derivative[i+1] < 0)
                     cv.Line(imageColor, (i,0), (i,480), (255,255,255))
-                    detected.append(i)
+                    percentage = float(i - display[0]) / float(display[1] - display[0])
+                    detected.append((i, percentage, calibrated[i]))
                     #os.system('beep -f 200 -l 0.1')
         
         #PRINT TRACES
@@ -291,32 +326,7 @@ while True:
         #SHOW
         cv.ShowImage("TDR",imageColor)
 
-        if mode == "piano":
-            # play sound: 
-            if len(detected) > 0:
-                for touch in range(len(detected)):
-                   percentage = float(detected[touch] - display[0]) / float(display[1] - display[0])
-                   tone = 440 + 440 * percentage
-                   synth.set(touch, tone)
-            else:
-                synth.clear()
-        if mode == "headphone":
-            if len(detected) > 0:
-                for touch in range(len(detected)):
-                   percentage = float(detected[touch] - display[0]) / float(display[1] - display[0])
-                   if percentage < 0.3:
-                        print "Prev"
-                        set_headphone("prev")
-                   elif percentage < 0.6:
-                        print "Toggle Play/Pause"
-                        set_headphone("play")
-                   else:
-                        print "Next"
-                        set_headphone("next")
-            else:
-                set_headphone("no_touch")
-                #print "No Touch"
-
+        process_touches(detected[:]) # pass a shallow copy
         
     #autoCalibrate
     calibrationTimer += 1
