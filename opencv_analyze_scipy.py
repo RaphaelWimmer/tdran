@@ -122,12 +122,14 @@ def set_headphone(mode):
 
 #GUI
 window = cv.NamedWindow("TDR", cv.CV_WINDOW_AUTOSIZE)
+window = cv.NamedWindow("Settings", cv.CV_WINDOW_AUTOSIZE)
 cv.SetMouseCallback("TDR", on_mouse,0)
 app = QtGui.QApplication(sys.argv)
 
 
 #mode = "headphone"
-mode = "analyze"
+mode = "demo"
+#mode = "analyze"
 #mode = "piano"
 
 if mode == "piano":
@@ -154,13 +156,13 @@ threshold = 30
 def change_threshold(val):
     global threshold 
     threshold = val
-cv.CreateTrackbar("Threshold", "TDR", threshold, 100, change_threshold)
+cv.CreateTrackbar("Threshold", "Settings", threshold, 100, change_threshold)
 
 alteration_average = 30
 def change_alteration_average(val):
     global alteration_average 
     alteration_average = val+1
-cv.CreateTrackbar("Alteration Average", "TDR", alteration_average, 50, change_alteration_average)
+cv.CreateTrackbar("Alteration Average", "Settings", alteration_average, 50, change_alteration_average)
 
 time_average = 10
 def change_time_average(val):
@@ -168,25 +170,25 @@ def change_time_average(val):
     global history 
     time_average = val+2 
     history = zeros([time_average,640])
-cv.CreateTrackbar("Time Average", "TDR", time_average, 50, change_time_average)
+cv.CreateTrackbar("Time Average", "Settings", time_average, 50, change_time_average)
 
 trace_average = 5
 def change_trace_average(val):
     global trace_average
     trace_average = val+1
-cv.CreateTrackbar("Trace Average", "TDR", trace_average, 50, change_trace_average)
+cv.CreateTrackbar("Trace Average", "Settings", trace_average, 50, change_trace_average)
 
 mask_average = 15
 def change_mask_average(val):
     global mask_average
     mask_average = val+1
-cv.CreateTrackbar("Mask Average", "TDR", mask_average, 50, change_mask_average)
+cv.CreateTrackbar("Mask Average", "Settings", mask_average, 50, change_mask_average)
 
 derivative_average = 10
 def change_derivative_average(val):
     global derivative_average
     derivative_average = val+1
-cv.CreateTrackbar("Derivative Average", "TDR", derivative_average, 50, change_derivative_average)
+cv.CreateTrackbar("Derivative Average", "Settings", derivative_average, 50, change_derivative_average)
 
 shot = 0
 pause = 0
