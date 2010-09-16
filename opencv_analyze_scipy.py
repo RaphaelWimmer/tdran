@@ -46,8 +46,6 @@ def drawGrid(image):
     #threshold
     cv.Line(image, (0,240+threshold), (640,240+threshold), (128,128,128))
 
-
-
 def analyzeImage(image, mask):
     trace = []
     xv = []
@@ -107,7 +105,6 @@ def autorange(calibrated):
     display[0] = first
     display[1] = last 
 
-
 headphone_images = {}
 
 def initialize_headphone():
@@ -117,6 +114,8 @@ def initialize_headphone():
 
 def set_headphone(mode):
     cv.ShowImage("Headphones", headphone_images[mode])
+
+
 
 
 ####################### START #####################
@@ -130,8 +129,15 @@ app = QtGui.QApplication(sys.argv)
 #mode = "headphone"
 mode = "analyze"
 #mode = "piano"
+
+if mode == "piano":
+    synth = tone.Synth(1)
+    synth.start_synth()
+    synth.clear()
+
 if mode == "headphone":
     cv.NamedWindow("Headphones", cv.CV_WINDOW_AUTOSIZE)
+    initialize_headphone()
 
 # initialize data source
 if len(sys.argv) > 1:
@@ -148,7 +154,7 @@ threshold = 30
 def change_threshold(val):
     global threshold 
     threshold = val
-cv.CreateTrackbar("Threshold", "TDR", threshold, 50, change_threshold)
+cv.CreateTrackbar("Threshold", "TDR", threshold, 100, change_threshold)
 
 alteration_average = 30
 def change_alteration_average(val):
@@ -201,13 +207,9 @@ calibration = zeros(640)
 corrSample = zeros(50)
 sc = abs(sinc(arange(0-320,640-210),0.03))
 
-if mode == "piano":
-    synth = tone.Synth(3)
 
 new_time = datetime.datetime.now()
 
-if mode == "headphone":
-    initialize_headphone()
 
 while True:
     #CAPTURE
@@ -289,7 +291,6 @@ while True:
 
         if mode == "piano":
             # play sound: 
-            synth.start()
             if len(detected) > 0:
                 for touch in range(len(detected)):
                    percentage = float(detected[touch] - display[0]) / float(display[1] - display[0])
@@ -329,6 +330,8 @@ while True:
     key = cv.WaitKey(7)
     key &= 1048575
     if key == 27:   #esc
+        if (mode == "piano"):
+            synth.stop_synth()
         break
     if key == ord('c'): #c
         print "Calibrating..."
