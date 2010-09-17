@@ -4,6 +4,7 @@ import xk
 from Xlib import XK
 import cv   #using opencv 2.0 ctype python bindings
 from utils import *
+import pickle
 
 class Record_keys:
 
@@ -29,6 +30,43 @@ class Record_keys:
     def shutdown(self):
         print self.keymap
         # save it
+        pickle.dump(self.keymap, open("keymap.pickle","w"))
+
+class Play_keys:
+    
+    Threshold = 2
+    Autorepeat = True
+
+    def __init__(self, params = None):
+        if params:
+            self.keymap = pickle.load(open(params))
+        else:
+            self.keymap = pickle.load(open("keymap.pickle"))
+        self.pressed_map_old = []
+
+    def process_touches(self, touches):
+       pressed_map_new = []
+       for touch in touches:
+           # TODO:  get key from keymap
+           for keypos in self.keymap:
+               if abs(touch[Touch.PERCENTAGE]*100.0 - keypos) < self.Threshold :
+                   pressed_map_new.append(self.keymap[keypos])
+       if self.Autorepeat == True:
+           for key in pressed_map_new:
+                   print "type", key
+                   xk.press_key(key)
+                   xk.release_key(key)
+       else: 
+           for key in unique(pressed_map_new + self.pressed_map_old):
+               if (key in pressed_map_new) and not (key in self.pressed_map_old):
+                   print "press", key
+                   xk.press_key(key)
+               if (key in self.pressed_map_old) and not (key in pressed_map_new):
+                   xk.release_key(key)
+                   print "release", key
+       self.pressed_map_old = pressed_map_new[:] # shallow copy
+    
+    def shutdown(self):
         pass
 
 class Headphones:
