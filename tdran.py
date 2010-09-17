@@ -15,15 +15,10 @@ from PyQt4 import QtGui
 import VideoSource
 import ImageSource
 
-from Xlib import XK
-import xk
+from utils import *
+import demos
 
 # DEFINES
-
-class Touch:
-    POSITION = POS = 0
-    PERCENTAGE = PERC = 1
-    AMPLITUDE = AMP = 2
 
 def process_touches(touches):
     # TODO: merge / clean up touches
@@ -37,20 +32,7 @@ def process_touches(touches):
             synth.clear()
 
     if mode == "piano2":
-       global piano_map_old
-       piano_map_new = []
-       for touch in touches:
-           new_note = XK.XK_a + int(touch[Touch.PERCENTAGE] * (XK.XK_z - XK.XK_a))
-           piano_map_new.append(new_note)
-
-       for note in range(XK.XK_a, XK.XK_z):
-           if (note in piano_map_new) and not (note in piano_map_old):
-               print "press", note
-               xk.press_key(note)
-           if (note in piano_map_old) and not (note in piano_map_new):
-               xk.release_key(note)
-               print "release", note
-       piano_map_old = piano_map_new[:] # shallow copy
+       piano2.process_touches(touches)
 
     if mode == "record_keys":
         global record_key_finished
@@ -185,9 +167,6 @@ def initialize_headphone():
 def set_headphone(mode):
     cv.ShowImage("Headphones", headphone_images[mode])
 
-
-
-
 ####################### START #####################
 
 #GUI
@@ -208,8 +187,8 @@ if mode == "piano":
     synth.clear()
 
 if mode == "piano2":
-    global piano_map_old
-    piano_map_old = []
+    global piano2
+    piano2 = demos.Piano2()
 
 if mode == "record_keys":
     global keymap
