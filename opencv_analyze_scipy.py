@@ -52,6 +52,23 @@ def process_touches(touches):
                print "release", note
        piano_map_old = piano_map_new[:] # shallow copy
 
+    if mode == "record_keys":
+        global record_key_finished
+        global keymap
+        if len(touches) == 0:
+            record_key_finished = True
+            return
+        elif len(touches) > 1:
+            print "multiple touches detected - touch only once!"
+            return
+        else: # => exactly one touch
+            if record_key_finished == True: # => we want to assign a new touch
+                record_key_finished = False
+                pos = int(touches[0][Touch.PERCENTAGE])
+                print "Waiting for key"
+                key = cv.WaitKey(0)
+                keymap[pos] = key
+
     if mode == "headphone":
         if len(touches) == 1:
             for touch in touches:
@@ -193,6 +210,12 @@ if mode == "piano":
 if mode == "piano2":
     global piano_map_old
     piano_map_old = []
+
+if mode == "record_keys":
+    global keymap
+    global record_key_finished
+    keymap = {}
+    record_key_finished = False # first wait for complete silence
 
 if mode == "headphone":
     cv.NamedWindow("Headphones", cv.CV_WINDOW_AUTOSIZE)
