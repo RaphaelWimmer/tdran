@@ -7,7 +7,6 @@ from scipy import interpolate, misc, fftpack, signal
 import datetime
 import time
 import os
-import tone
 
 import sys
 from PyQt4 import QtGui
@@ -22,52 +21,9 @@ import demos
 
 def process_touches(touches):
     # TODO: merge / clean up touches
-    if mode == "piano":
-        # play sound: 
-        if len(touches) > 0:
-            for touch in range(len(touches)):
-               tone = 440 + 440 * touches[touch][Touch.PERCENTAGE]
-               synth.set(touch, tone)
-        else:
-            synth.clear()
 
-    if mode == "piano2":
-       piano2.process_touches(touches)
-
-    if mode == "record_keys":
-        global record_key_finished
-        global keymap
-        if len(touches) == 0:
-            record_key_finished = True
-            return
-        elif len(touches) > 1:
-            print "multiple touches detected - touch only once!"
-            return
-        else: # => exactly one touch
-            if record_key_finished == True: # => we want to assign a new touch
-                record_key_finished = False
-                pos = int(touches[0][Touch.PERCENTAGE])
-                print "Waiting for key"
-                key = cv.WaitKey(0)
-                keymap[pos] = key
-
-    if mode == "headphone":
-        if len(touches) == 1:
-            for touch in touches:
-               if touch[Touch.PERCENTAGE] < 0.3:
-                    print "Prev"
-                    set_headphone("prev")
-               elif touch[Touch.PERCENTAGE] < 0.6:
-                    print "Toggle Play/Pause"
-                    set_headphone("play")
-               else:
-                    print "Next"
-                    set_headphone("next")
-        elif len(touches) > 1:
-            print "multiple touches"
-        else:
-            set_headphone("no_touch")
-            #print "No Touch"
+    if demo:
+        demo.process_touches(touches)
 
 def discreteDerivative(trace):
     return trace - roll(trace,1,0)
@@ -157,16 +113,6 @@ def autorange(calibrated):
     display[0] = first
     display[1] = last 
 
-headphone_images = {}
-
-def initialize_headphone():
-    for name in ["no_touch", "play", "prev", "next"]:
-        headphone_images[name] = cv.LoadImage("headphones/" + name+".png")
-    set_headphone("no_touch")
-
-def set_headphone(mode):
-    cv.ShowImage("Headphones", headphone_images[mode])
-
 ####################### START #####################
 
 #GUI
@@ -175,30 +121,12 @@ window = cv.NamedWindow("Settings", cv.CV_WINDOW_AUTOSIZE)
 cv.SetMouseCallback("TDR", on_mouse,0)
 app = QtGui.QApplication(sys.argv)
 
-
 if len(sys.argv) > 1:
     mode = sys.argv[1]
+    demo = eval("demos." + mode.capitalize() + "()")
 else: 
     mode = "analyze"
-
-if mode == "piano":
-    synth = tone.Synth(1)
-    synth.start_synth()
-    synth.clear()
-
-if mode == "piano2":
-    global piano2
-    piano2 = demos.Piano2()
-
-if mode == "record_keys":
-    global keymap
-    global record_key_finished
-    keymap = {}
-    record_key_finished = False # first wait for complete silence
-
-if mode == "headphone":
-    cv.NamedWindow("Headphones", cv.CV_WINDOW_AUTOSIZE)
-    initialize_headphone()
+    demo = None
 
 # initialize data source
 #if len(sys.argv) > 1:
@@ -368,8 +296,8 @@ while True:
     key = cv.WaitKey(7)
     key &= 1048575
     if key == 27:   #esc
-        if (mode == "piano"):
-            synth.stop_synth()
+        if demo:
+           demo.shutdown()
         break
     if key == ord('c'): #c
         print "Calibrating..."
