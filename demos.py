@@ -22,10 +22,11 @@ class Record_keys:
         else: # => exactly one touch
             if self.record_key_finished == True: # => we want to assign a new touch
                 self.record_key_finished = False
-                pos = int(100.0 * touches[0][Touch.PERCENTAGE])
+                pos = int(touches[0][Touch.POSITION])
                 print "Waiting for key"
                 key = cv.WaitKey(0)
-                self.keymap[pos] = key
+                if key != 27: # Esc
+                    self.keymap[pos] = key
     
     def shutdown(self):
         print self.keymap
@@ -34,14 +35,17 @@ class Record_keys:
 
 class Play_keys:
     
-    Threshold = 2
-    Autorepeat = True
+    Threshold = 5
+    Autorepeat = False
 
     def __init__(self, params = None):
         if params:
             self.keymap = pickle.load(open(params))
         else:
             self.keymap = pickle.load(open("keymap.pickle"))
+
+        self.Threshold = self.calc_min_distance(self.keymap) / 2
+        print self.Threshold
         self.pressed_map_old = []
 
     def process_touches(self, touches):
@@ -49,7 +53,7 @@ class Play_keys:
        for touch in touches:
            # TODO:  get key from keymap
            for keypos in self.keymap:
-               if abs(touch[Touch.PERCENTAGE]*100.0 - keypos) < self.Threshold :
+               if abs(touch[Touch.POSITION] - keypos) < self.Threshold :
                    pressed_map_new.append(self.keymap[keypos])
        if self.Autorepeat == True:
            for key in pressed_map_new:
@@ -68,6 +72,11 @@ class Play_keys:
     
     def shutdown(self):
         pass
+
+    def calc_min_distance(self, keymap):
+        pos_a = sorted(keymap.keys())
+        pos_b = pos_a[1:]
+        return min(map(lambda x,y:abs(x-y), pos_b, pos_a[:-1]))
 
 class Headphones:
 
