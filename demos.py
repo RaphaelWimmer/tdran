@@ -5,6 +5,7 @@ from Xlib import XK
 import cv   #using opencv 2.0 ctype python bindings
 from utils import *
 import pickle
+from threading import *
 
 class Record_keys:
 
@@ -151,3 +152,53 @@ class Piano:
     
     def shutdown(self):
         synth.stop_synth()
+
+
+class Tcp:
+
+    def __init__(self, params = ("127.0.0.1",2345)):
+        self.server = TCP_Server(params)
+        self.server.start()
+
+    def process_touches(self, touches):
+        if not self.server.connected:
+            return
+        else:
+            for touch in touches:
+                print "sending touch"
+                self.server.send("touch,%d,%d\r\n" % (touch[Touch.POSITION],touch[Touch.AMPLITUDE]))
+
+    def shutdown(self):
+        self.server.stop()
+
+
+class TCP_Server(Thread):
+    
+    def __init__(self, params = ("127.0.0.1",2345)):
+        Thread.__init__(self)
+        import socket
+        import Queue
+        import time
+        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.s.bind(params)
+        self.s.listen(1)
+        self.conn = None
+        self.queue = Queue.Queue()
+        self.connected = False
+    
+    def run(self):
+        self.running = True
+        self.conn, addr = self.s.accept()
+        print 'Connected by', addr
+        self.connected = True
+        while self.running:
+            data = self.queue.get()
+            self.conn.send(data)
+            print "Sent data:", data
+        self.conn.close()
+
+    def stop(self):
+        self.running = False
+
+    def send(self, data):
+        self.queue.put(data)
