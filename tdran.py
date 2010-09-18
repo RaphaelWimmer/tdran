@@ -20,8 +20,6 @@ import demos
 # DEFINES
 
 def process_touches(touches):
-    # TODO: merge / clean up touches
-
     if demo:
         demo.process_touches(touches)
 
@@ -160,6 +158,7 @@ def change_derivative_average(val):
     derivative_average = val+1
 cv.CreateTrackbar("Derivative Average", "Settings", derivative_average, 50, change_derivative_average)
 
+max_touches = 1000 
 shot = 0
 pause = 0
 grid = 1
@@ -242,11 +241,21 @@ while True:
             detected = []
             for i in range(display[0], display[1]):
                 if ((calibrated[i] > threshold) and ((derivative[i] > 0 and derivative[i+1] <= 0))): #or (derivative[i] >= 0 and derivative[i+1] < 0)
-                    cv.Line(imageColor, (i,0), (i,480), (255,255,255))
+                    cv.Line(imageColor, (i,0), (i,480), (125,125,125))
                     percentage = float(i - display[0]) / float(display[1] - display[0])
                     detected.append((i, percentage, calibrated[i]))
                     #os.system('beep -f 200 -l 0.1')
         
+
+        # remove erroneous touches
+        # maximum of n touches, (merge similar touches), etc.
+        if max_touches < 900: # arbitrary high number
+            detected.sort(key=lambda t: t[2], reverse = True)
+            detected = detected[:max_touches]
+
+        for touch in detected:
+            cv.Line(imageColor, (touch[Touch.POSITION],0), (touch[Touch.POSITION],480), (255,255,255))
+
         #PRINT TRACES
         if traces == 1:
             printTrace(avg, imageColor, (0,0,255), display)
