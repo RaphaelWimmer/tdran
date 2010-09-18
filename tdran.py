@@ -180,6 +180,12 @@ sc = abs(sinc(arange(0-320,640-210),0.03))
 
 new_time = datetime.datetime.now()
 
+try:
+    settings = open("settings.pickle", "r")
+except IOError:
+    print "creating new settings file"
+    settings = open("settings.pickle", "w")
+
 
 while True:
     #CAPTURE
