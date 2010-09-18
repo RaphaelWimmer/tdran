@@ -25,18 +25,6 @@ def process_touches(touches):
     if demo:
         demo.process_touches(touches)
 
-def discreteDerivative(trace):
-    return trace - roll(trace,1,0)
-
-def filterMovingAverage(trace, size):
-    filtered = list(trace)
-    for i in range (size, 640-size):
-        filtered[i] = 0
-        for j in range(-size, size+1):
-            filtered[i] = filtered[i] + trace[i+j]
-        filtered[i] /= size*2+1
-    return filtered
-
 def drawGrid(image):
     pts = []
     #vertical
@@ -87,12 +75,6 @@ def on_mouse(event, x, y, flags, param):
     if event == cv.CV_EVENT_RBUTTONDOWN:
         threshold = y - 240
         print "threshold" + str(threshold)
-
-def sinc(i,f):
-    return sin(2*math.pi*f*i)/i*math.pi
-
-def kernel(i):
-    return ones(i) / i
 
 def autorange(calibrated):
     first = 0
@@ -196,7 +178,6 @@ calibration = zeros(640)
 
 corrSample = zeros(50)
 sc = abs(sinc(arange(0-320,640-210),0.03))
-
 
 new_time = datetime.datetime.now()
 

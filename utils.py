@@ -1,5 +1,8 @@
 #!/usr/bin/python
 
+from numpy import *
+from scipy import interpolate, misc, fftpack, signal
+
 class Touch:
     POSITION = POS = 0
     PERCENTAGE = PERC = 1
@@ -72,3 +75,21 @@ def unique(s):
         if x not in u:
             u.append(x)
     return u
+
+def discreteDerivative(trace):
+    return trace - roll(trace,1,0)
+
+def filterMovingAverage(trace, size):
+    filtered = list(trace)
+    for i in range (size, len(trace) - size):
+        filtered[i] = 0
+        for j in range(-size, size+1):
+            filtered[i] = filtered[i] + trace[i+j]
+        filtered[i] /= size*2+1
+    return filtered
+
+def sinc(i,f):
+    return sin(2*math.pi*f*i)/i*math.pi
+
+def kernel(i):
+    return ones(i) / i
