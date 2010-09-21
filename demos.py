@@ -166,25 +166,58 @@ class Piano:
 
 class Tcp:
 
-    def __init__(self, params = ("127.0.0.1",2345)):
-        self.server = TCP_Server(params)
+    def __init__(self, params = ("",2345)):
+        self.params = params
+        self.server = TCP_Server(self.params)
         self.server.start()
+        self.old_touch = 0
+        self.start_touch_pos = 0
+        self.threshold = 2 
+
+    def transmit(self, data):
+        sent = self.server.send(data)
+        if sent == False:
+            self.server.stop()
+            print "Connection interrupted"
+            self.server = TCP_Server(self.params)
+            self.server.start()
 
     def process_touches(self, touches):
         if not self.server.connected:
             return
         else:
-            for touch in touches:
-                print "sending touch"
-                self.server.send("touch,%d,%d\r\n" % (touch[Touch.POSITION],touch[Touch.AMPLITUDE]))
+            if len(touches) == 0 and self.old_touch != 0:
+                self.transmit("release,0,%d,%d\r\n" % (self.old_touch,0))
+                self.old_touch = 0 # FIXME: need to compensate tracking blackouts
+                self.start_touch_pos = 0
+            if len(touches) == 1:
+                if self.old_touch == 0: # new touch
+                    self.transmit("touch,0,%d,%d\r\n" % (touches[0][Touch.POSITION],
+                                                          touches[0][Touch.AMPLITUDE]))
+                    self.old_touch = touches[0][Touch.POSITION]
+                    self.start_touch_pos = self.old_touch
+
+                else: # move
+                    # delta = touches[0][Touch.POSITION] - self.old_touch
+                    delta = touches[0][Touch.POSITION] - self.start_touch_pos
+                    if abs(delta) > self.threshold:
+                        bytes_sent = self.transmit("move,0,%d,%d\r\n" % (delta, touches[0][Touch.AMPLITUDE]))
+                    self.old_touch = touches[0][Touch.POSITION]
+
+            else: # multiple touches
+                for touch in touches:
+                    print "sending raw touch"
+                    bytes_sent = self.transmit("raw_touch,%d,%d\r\n" % (touch[Touch.POSITION],touch[Touch.AMPLITUDE]))
 
     def shutdown(self):
-        self.server.stop()
-
+        if self.server.running:
+            self.server.stop()
+        else: # server is waiting for connection
+            self.server.s.close()
 
 class TCP_Server(Thread):
     
-    def __init__(self, params = ("127.0.0.1",2345)):
+    def __init__(self, params = ("",2345)):
         Thread.__init__(self)
         import socket
         import Queue
@@ -194,16 +227,22 @@ class TCP_Server(Thread):
         self.s.listen(1)
         self.conn = None
         self.queue = Queue.Queue()
+        self.running = False
         self.connected = False
     
     def run(self):
-        self.running = True
         self.conn, addr = self.s.accept()
+        self.running = True
         print 'Connected by', addr
         self.connected = True
+        self.conn.send("Hello,0,0,0\r\n")
         while self.running:
             data = self.queue.get()
-            self.conn.send(data)
+            try:
+                self.conn.send(data)
+            except:
+                print "Connection broken"
+                self.running = False
             print "Sent data:", data
         self.conn.close()
 
@@ -211,4 +250,8 @@ class TCP_Server(Thread):
         self.running = False
 
     def send(self, data):
-        self.queue.put(data)
+        if self.running:
+            self.queue.put(data)
+            return True
+        else:
+            return False
