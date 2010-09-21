@@ -149,9 +149,9 @@ source = VideoSource.VideoSource()
 imageColor = cv.CreateImage([640,480], cv.IPL_DEPTH_8U, 3)
 
 #Global
-display=[0,639]
+display=[30,600]
 
-threshold = 30
+threshold = 50
 def change_threshold(val):
     global threshold 
     threshold = val
@@ -171,7 +171,7 @@ def change_time_average(val):
     history = zeros([time_average,640])
 cv.CreateTrackbar("Time Average", "Settings", time_average, 50, change_time_average)
 
-trace_average = 5
+trace_average = 30
 def change_trace_average(val):
     global trace_average
     trace_average = val+1
@@ -315,7 +315,7 @@ while True:
         calibration = array(filtered)
 
     if calibrationTimer == 31:
-        autorange(calibrated)
+        # autorange(calibrated)
         traces = 1
         detection = 1
         
