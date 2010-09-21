@@ -8,6 +8,11 @@ class Touch:
     PERCENTAGE = PERC = 1
     AMPLITUDE = AMP = 2
 
+    def __init__(self, pos, percentage, amplitude ):
+        self.pos = pos
+        self.percentage = percentage
+        self.amplitude = amplitude
+
 def unique(s):
     """Return a list of the elements in s, but without duplicates.
 
