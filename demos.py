@@ -84,15 +84,19 @@ class Headphones:
     def __init__(self, params = None):
         cv.NamedWindow("Headphones", cv.CV_WINDOW_AUTOSIZE)
         self.headphone_images = {}
+        self.pressed_mask = {}
         for name in ["no_touch", "play", "prev", "next"]:
             self.headphone_images[name] = cv.LoadImage("headphones/" + name+".png")
+            self.pressed_mask[name] = False
         self.set_headphone("no_touch")
+        self.playing = False
 
     def process_touches(self, touches):
         if len(touches) == 1:
             for touch in touches:
                if touch[Touch.PERCENTAGE] < 0.3:
                     print "Prev"
+                    self.pressed_mask[0] = True
                     self.set_headphone("prev")
                elif touch[Touch.PERCENTAGE] < 0.6:
                     print "Toggle Play/Pause"
@@ -103,9 +107,15 @@ class Headphones:
         elif len(touches) > 1:
             print "multiple touches"
         else:
+            for button in self.pressed_mask[1:]:
+                if self.pressed_mask[button] == True: # has been released
+                    self.set_headphone
             self.set_headphone("no_touch")
     
     def set_headphone(self, mode):
+        if mode == "play" and self.playing:
+            self.playing = False
+            mode = "pause"
         cv.ShowImage("Headphones", self.headphone_images[mode])
 
     def shutdown(self):
