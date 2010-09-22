@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import os
 import xk
 from Xlib import XK
 import cv   #using opencv 2.0 ctype python bindings
@@ -84,29 +85,58 @@ class Headphones:
     def __init__(self, params = None):
         cv.NamedWindow("Headphones", cv.CV_WINDOW_AUTOSIZE)
         self.headphone_images = {}
-        for name in ["no_touch", "play", "prev", "next"]:
+        for name in ["no_touch", "play", "pause", "stop", "playing", "stopped"]:
             self.headphone_images[name] = cv.LoadImage("headphones/" + name+".png")
+        self.volume = 30
+        self.playing = False
+        self.play_released = False
         self.set_headphone("no_touch")
 
     def process_touches(self, touches):
         if len(touches) == 1:
             for touch in touches:
-               if touch[Touch.PERCENTAGE] < 0.3:
-                    print "Prev"
-                    self.set_headphone("prev")
-               elif touch[Touch.PERCENTAGE] < 0.6:
+               if touch[Touch.PERCENTAGE] > 0.8:
                     print "Toggle Play/Pause"
                     self.set_headphone("play")
                else:
-                    print "Next"
-                    self.set_headphone("next")
+                    print "Volume", touch[Touch.PERCENTAGE] / 0.8
+                    self.volume = int(100.0 * touch[Touch.PERCENTAGE] * 1.5)
+                    os.spawnlp(os.P_NOWAIT, "amixer", "amixer", "sset", "Master", "%d" % (self.volume))
+                    if self.playing:
+                        self.set_headphone("playing")
+                    else:
+                        self.set_headphone("stopped")
         elif len(touches) > 1:
             print "multiple touches"
         else:
-            self.set_headphone("no_touch")
+            if self.playing:
+                self.set_headphone("playing")
+            else:
+                self.set_headphone("stopped")
     
     def set_headphone(self, mode):
+        if mode == "play" :
+            if self.play_released:
+                if self.playing:
+                    os.popen("killall mplayer")
+                    self.playing = False
+                    self.play_released = False
+                    mode = "pause"
+                else: # paused
+                    os.spawnlp(os.P_NOWAIT, "amixer", "amixer", "sset", "Master", "100")
+                    os.spawnlp(os.P_NOWAIT, "playsound", "playsound", "headphones/play.wav")
+                    os.spawnlp(os.P_NOWAIT, "amixer", "amixer", "sset", "Master", "30")
+                    self.volume = 30
+                    os.spawnlp(os.P_NOWAIT, "mplayer", "mplayer", "headphones/xylophone.mp3")
+                    self.playing = True
+                    self.play_released = False
+        else:
+            self.play_released = True
+
+        cv.Rectangle(self.headphone_images[mode],(0,800), (1440,850), (255,255,255), cv.CV_FILLED)
+        cv.Rectangle(self.headphone_images[mode],(0,805), (1440 * self.volume / 100 ,845), (0,0,0), cv.CV_FILLED)
         cv.ShowImage("Headphones", self.headphone_images[mode])
+
 
     def shutdown(self):
         pass
@@ -156,25 +186,58 @@ class Piano:
 
 class Tcp:
 
-    def __init__(self, params = ("127.0.0.1",2345)):
-        self.server = TCP_Server(params)
+    def __init__(self, params = ("",2345)):
+        self.params = params
+        self.server = TCP_Server(self.params)
         self.server.start()
+        self.old_touch = 0
+        self.start_touch_pos = 0
+        self.threshold = 2 
+
+    def transmit(self, data):
+        sent = self.server.send(data)
+        if sent == False:
+            self.server.stop()
+            print "Connection interrupted"
+            self.server = TCP_Server(self.params)
+            self.server.start()
 
     def process_touches(self, touches):
         if not self.server.connected:
             return
         else:
-            for touch in touches:
-                print "sending touch"
-                self.server.send("touch,%d,%d\r\n" % (touch[Touch.POSITION],touch[Touch.AMPLITUDE]))
+            if len(touches) == 0 and self.old_touch != 0:
+                self.transmit("release,0,%d,%d\r\n" % (self.old_touch,0))
+                self.old_touch = 0 # FIXME: need to compensate tracking blackouts
+                self.start_touch_pos = 0
+            if len(touches) == 1:
+                if self.old_touch == 0: # new touch
+                    self.transmit("touch,0,%d,%d\r\n" % (touches[0][Touch.POSITION],
+                                                          touches[0][Touch.AMPLITUDE]))
+                    self.old_touch = touches[0][Touch.POSITION]
+                    self.start_touch_pos = self.old_touch
+
+                else: # move
+                    # delta = touches[0][Touch.POSITION] - self.old_touch
+                    delta = touches[0][Touch.POSITION] - self.start_touch_pos
+                    if abs(delta) > self.threshold:
+                        bytes_sent = self.transmit("move,0,%d,%d\r\n" % (delta, touches[0][Touch.AMPLITUDE]))
+                    self.old_touch = touches[0][Touch.POSITION]
+
+            else: # multiple touches
+                for touch in touches:
+                    print "sending raw touch"
+                    bytes_sent = self.transmit("raw_touch,%d,%d\r\n" % (touch[Touch.POSITION],touch[Touch.AMPLITUDE]))
 
     def shutdown(self):
-        self.server.stop()
-
+        if self.server.running:
+            self.server.stop()
+        else: # server is waiting for connection
+            self.server.s.close()
 
 class TCP_Server(Thread):
     
-    def __init__(self, params = ("127.0.0.1",2345)):
+    def __init__(self, params = ("",2345)):
         Thread.__init__(self)
         import socket
         import Queue
@@ -184,16 +247,22 @@ class TCP_Server(Thread):
         self.s.listen(1)
         self.conn = None
         self.queue = Queue.Queue()
+        self.running = False
         self.connected = False
     
     def run(self):
-        self.running = True
         self.conn, addr = self.s.accept()
+        self.running = True
         print 'Connected by', addr
         self.connected = True
+        self.conn.send("Hello,0,0,0\r\n")
         while self.running:
             data = self.queue.get()
-            self.conn.send(data)
+            try:
+                self.conn.send(data)
+            except:
+                print "Connection broken"
+                self.running = False
             print "Sent data:", data
         self.conn.close()
 
@@ -201,4 +270,8 @@ class TCP_Server(Thread):
         self.running = False
 
     def send(self, data):
-        self.queue.put(data)
+        if self.running:
+            self.queue.put(data)
+            return True
+        else:
+            return False

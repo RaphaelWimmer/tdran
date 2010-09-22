@@ -23,6 +23,37 @@ def process_touches(touches):
     if demo:
         demo.process_touches(touches)
 
+def merge_touches(touches):
+    to_merge = []
+    merged = []
+    to_merge.append(touches[0])
+    for i in range(len(touches)-1):
+        cur = touches[i]
+        nxt = touches[i+1]
+        if abs(cur[Touch.POSITION] - nxt[Touch.POSITION]) < min_touch_dist:
+            to_merge.append(nxt)
+        else: 
+            if len(to_merge) == 1:
+                merged.append(to_merge[0])
+            else:
+                print "merging", to_merge
+                #to_merge = unique(to_merge)
+                if merge_mode == "max":
+                    to_merge.sort(key=lambda t: t[2], reverse = True)
+                    merged.append(to_merge[0])
+                else: # mean
+                    acc = 0
+                    pos = 0
+                    for t in to_merge:
+                        acc += t[Touch.AMPLITUDE]
+                        pos += t[Touch.POSITION] * t[Touch.AMPLITUDE]
+                    pos = pos / acc
+                    percentage = float(i - display[0]) / float(display[1] - display[0])
+                    percentage = float(pos - display[0]) / float(display[1] - display[0])
+                    merged.append((pos, percentage, acc/len(to_merge)))
+            to_merge = [touches[i+1]]
+    return merged
+    
 def drawGrid(image):
     pts = []
     #vertical
@@ -118,9 +149,9 @@ source = VideoSource.VideoSource()
 imageColor = cv.CreateImage([640,480], cv.IPL_DEPTH_8U, 3)
 
 #Global
-display=[0,639]
+display=[30,600]
 
-threshold = 30
+threshold = 50
 def change_threshold(val):
     global threshold 
     threshold = val
@@ -140,7 +171,7 @@ def change_time_average(val):
     history = zeros([time_average,640])
 cv.CreateTrackbar("Time Average", "Settings", time_average, 50, change_time_average)
 
-trace_average = 5
+trace_average = 30
 def change_trace_average(val):
     global trace_average
     trace_average = val+1
@@ -205,7 +236,6 @@ while True:
             trace = zeros(2)
         f = interpolate.interp1d(x, trace, bounds_error = 0, fill_value = 0)
             
-        
         xa = arange(0,640) 
         interpolated = f(xa)
         
@@ -255,9 +285,16 @@ while True:
 
         # remove erroneous touches
         # maximum of n touches, (merge similar touches), etc.
-        if max_touches < 900: # arbitrary high number
-            detected.sort(key=lambda t: t[2], reverse = True)
-            detected = detected[:max_touches]
+
+        #min_touch_dist = 10 # config!
+        #merge_mode = "mean" # or "mean"
+
+        # assumes that detected is sorted by Touch.POSITION:
+        #if len(detected) > 0:
+        #    detected = merge_touches(detected[:])
+        #if max_touches < 900: # arbitrary high number
+        #    detected.sort(key=lambda t: t[2], reverse = True)
+        #    detected = detected[:max_touches]
 
         for touch in detected:
             cv.Line(imageColor, (touch[Touch.POSITION],0), (touch[Touch.POSITION],480), (255,255,255))
@@ -284,7 +321,7 @@ while True:
         calibration = array(filtered)
 
     if calibrationTimer == 31:
-        autorange(calibrated)
+        # autorange(calibrated)
         traces = 1
         detection = 1
         
