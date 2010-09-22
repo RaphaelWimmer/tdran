@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import os
 import xk
 from Xlib import XK
 import cv   #using opencv 2.0 ctype python bindings
@@ -84,39 +85,58 @@ class Headphones:
     def __init__(self, params = None):
         cv.NamedWindow("Headphones", cv.CV_WINDOW_AUTOSIZE)
         self.headphone_images = {}
-        self.pressed_mask = {}
-        for name in ["no_touch", "play", "prev", "next"]:
+        for name in ["no_touch", "play", "pause", "stop", "playing", "stopped"]:
             self.headphone_images[name] = cv.LoadImage("headphones/" + name+".png")
-            self.pressed_mask[name] = False
-        self.set_headphone("no_touch")
+        self.volume = 30
         self.playing = False
+        self.play_released = False
+        self.set_headphone("no_touch")
 
     def process_touches(self, touches):
         if len(touches) == 1:
             for touch in touches:
-               if touch[Touch.PERCENTAGE] < 0.3:
-                    print "Prev"
-                    self.pressed_mask[0] = True
-                    self.set_headphone("prev")
-               elif touch[Touch.PERCENTAGE] < 0.6:
+               if touch[Touch.PERCENTAGE] > 0.8:
                     print "Toggle Play/Pause"
                     self.set_headphone("play")
                else:
-                    print "Next"
-                    self.set_headphone("next")
+                    print "Volume", touch[Touch.PERCENTAGE] / 0.8
+                    self.volume = int(100.0 * touch[Touch.PERCENTAGE] * 1.5)
+                    os.spawnlp(os.P_NOWAIT, "amixer", "amixer", "sset", "Master", "%d" % (self.volume))
+                    if self.playing:
+                        self.set_headphone("playing")
+                    else:
+                        self.set_headphone("stopped")
         elif len(touches) > 1:
             print "multiple touches"
         else:
-            for button in self.pressed_mask[1:]:
-                if self.pressed_mask[button] == True: # has been released
-                    self.set_headphone
-            self.set_headphone("no_touch")
+            if self.playing:
+                self.set_headphone("playing")
+            else:
+                self.set_headphone("stopped")
     
     def set_headphone(self, mode):
-        if mode == "play" and self.playing:
-            self.playing = False
-            mode = "pause"
+        if mode == "play" :
+            if self.play_released:
+                if self.playing:
+                    os.popen("killall mplayer")
+                    self.playing = False
+                    self.play_released = False
+                    mode = "pause"
+                else: # paused
+                    os.spawnlp(os.P_NOWAIT, "amixer", "amixer", "sset", "Master", "100")
+                    os.spawnlp(os.P_NOWAIT, "playsound", "playsound", "headphones/play.wav")
+                    os.spawnlp(os.P_NOWAIT, "amixer", "amixer", "sset", "Master", "30")
+                    self.volume = 30
+                    os.spawnlp(os.P_NOWAIT, "mplayer", "mplayer", "headphones/xylophone.mp3")
+                    self.playing = True
+                    self.play_released = False
+        else:
+            self.play_released = True
+
+        cv.Rectangle(self.headphone_images[mode],(0,800), (1440,850), (255,255,255), cv.CV_FILLED)
+        cv.Rectangle(self.headphone_images[mode],(0,805), (1440 * self.volume / 100 ,845), (0,0,0), cv.CV_FILLED)
         cv.ShowImage("Headphones", self.headphone_images[mode])
+
 
     def shutdown(self):
         pass
