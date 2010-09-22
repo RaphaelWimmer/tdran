@@ -7,6 +7,7 @@ from scipy import interpolate, misc, fftpack, signal
 import datetime
 import time
 import os
+import pickle
 
 import sys
 from PyQt4 import QtGui
@@ -139,6 +140,25 @@ else:
     mode = "analyze"
     demo = None
 
+# load settings
+
+DEFAULTS = { 
+    "threshold"           : 50,
+    "display"             : [30,600],
+    "alteration_average"  : 30,
+    "derivative_average"  : 30,
+    "time_average"        : 30,
+    "trace_average"       : 30,
+    "mask_average"        : 30,
+    "touch_average"       : 1
+ }
+
+if os.access(mode + ".pickle", os.R_OK):
+    settings = pickle.load(open(mode + ".pickle"))
+else:
+    settings = DEFAULTS
+
+
 # initialize data source
 #if len(sys.argv) > 1:
 #    source = ImageSource.ImageSource(sys.argv[1])
@@ -149,45 +169,51 @@ source = VideoSource.VideoSource()
 imageColor = cv.CreateImage([640,480], cv.IPL_DEPTH_8U, 3)
 
 #Global
-display=[30,600]
+display=settings["display"]
 
-threshold = 50
+threshold = settings["threshold"]
 def change_threshold(val):
     global threshold 
     threshold = val
-cv.CreateTrackbar("Threshold", "Settings", threshold, 100, change_threshold)
+cv.CreateTrackbar("threshold", "Settings", threshold, 100, change_threshold)
 
-alteration_average = 30
+alteration_average = settings["alteration_average"]
 def change_alteration_average(val):
     global alteration_average 
     alteration_average = val+1
-cv.CreateTrackbar("Alteration Average", "Settings", alteration_average, 50, change_alteration_average)
+cv.CreateTrackbar("alteration_average", "Settings", alteration_average, 50, change_alteration_average)
 
-time_average = 10
+time_average = settings["time_average"] 
 def change_time_average(val):
     global time_average
     global history 
     time_average = val+2 
     history = zeros([time_average,640])
-cv.CreateTrackbar("Time Average", "Settings", time_average, 50, change_time_average)
+cv.CreateTrackbar("time_average", "Settings", time_average, 50, change_time_average)
 
-trace_average = 30
+trace_average = settings["trace_average"]
 def change_trace_average(val):
     global trace_average
     trace_average = val+1
-cv.CreateTrackbar("Trace Average", "Settings", trace_average, 50, change_trace_average)
+cv.CreateTrackbar("trace_average", "Settings", trace_average, 50, change_trace_average)
 
-mask_average = 15
+mask_average = settings["mask_average"]
 def change_mask_average(val):
     global mask_average
     mask_average = val+1
-cv.CreateTrackbar("Mask Average", "Settings", mask_average, 50, change_mask_average)
+cv.CreateTrackbar("mask_average", "Settings", mask_average, 50, change_mask_average)
 
-derivative_average = 10
+derivative_average = settings["derivative_average"]
 def change_derivative_average(val):
     global derivative_average
     derivative_average = val+1
-cv.CreateTrackbar("Derivative Average", "Settings", derivative_average, 50, change_derivative_average)
+cv.CreateTrackbar("derivative_average", "Settings", derivative_average, 50, change_derivative_average)
+
+touch_average = settings["touch_average"]
+def change_touch_average(val):
+    global touch_average
+    touch_average = val+1
+cv.CreateTrackbar("touch_average", "Settings", touch_average, 50, change_touch_average)
 
 max_touches = 1000 
 shot = 0
@@ -210,13 +236,6 @@ corrSample = zeros(50)
 sc = abs(sinc(arange(0-320,640-210),0.03))
 
 new_time = datetime.datetime.now()
-
-try:
-    settings = open("settings.pickle", "r")
-except IOError:
-    print "creating new settings file"
-    settings = open("settings.pickle", "w")
-
 
 while True:
     #CAPTURE
@@ -362,6 +381,17 @@ while True:
     if key == ord('.'):
         markers = []
         print "New markers."
+    if key == ord('s'): # save
+        print "Saving to file"
+        for setting in settings:
+            settings[setting] = eval(setting)
+        print settings
+        pickle.dump(settings,open(mode + ".pickle","w"))
+    if key == ord('l'): # load 
+        settings = pickle.load(open(mode + ".pickle","r"))
+        for setting in settings:
+            exec(setting + ' = settings["'+ setting + '"]')
+            #exec('cv.SetTrackbarPos("' + setting + '","Settings", settings["' + setting + '"])') 
     if key == ord('t'):
         if traces == 1: traces = 0
         else: traces = 1
@@ -380,16 +410,18 @@ while True:
         print "Pause: " + str(pause)
     if key == 9:        #tab
         #if topicName == "": 
-        tn, ok = QtGui.QInputDialog.getText(None, "Name fuer Screenshots", "Thema")
-        if ok:
-            topicName = str(tn)
+        #tn, ok = QtGui.QInputDialog.getText(None, "Name fuer Screenshots", "Thema")
+        #if ok:
+        #    topicName = str(tn)
         dt = datetime.datetime.now()
         if not os.path.exists("shots/" + dt.strftime("%Y-%m-%d")):
             os.mkdir("shots/" + dt.strftime("%Y-%m-%d"))
         shot += 1
-        filename = "shots/" + dt.strftime("%Y-%m-%d") + "/" + dt.strftime("%Y-%m-%d %H:%M:%S") + " Shot "+str(shot)+" ("+topicName+").png"
-        print "Saving image: '" + filename + "'"
-        cv.SaveImage(filename, imageColor)
+        filebase = "shots/" + dt.strftime("%Y-%m-%d") + "/" + dt.strftime("%Y-%m-%d %H:%M:%S") + "_shot_"+str(shot)+"_("+mode+")"
+        print "Saving image: '" + filebase + ".png'"
+        cv.SaveImage(filebase + ".png", imageColor)
+        print "Saving image: '" + filebase + "_raw.png'"
+        cv.SaveImage(filebase + "_raw.png", img)
 
     new_time = datetime.datetime.now()
     timediff = new_time - old_time
