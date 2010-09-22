@@ -1,3 +1,4 @@
+import pickle
 
 class Settings:
     
