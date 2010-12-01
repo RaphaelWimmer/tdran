@@ -13,9 +13,8 @@ class VideoSource:
 
     def next(self):
         self.img = cv.QueryFrame(self.capturing_device)
-        self.img = undistort(self.img)
         #cv.CvtColor(self.img, self.imageColor, cv.CV_GRAY2RGB)
-        return self.img
+        return undistort(self.img)
         
 
        
