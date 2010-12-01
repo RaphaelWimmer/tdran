@@ -13,6 +13,9 @@ class Record_keys:
     def __init__(self, params = None):
         self.keymap = {}
         self.record_key_finished = False # first wait for complete silence
+        self.record_img = cv.LoadImage("record_keys/record.png")
+        self.wait_img = cv.LoadImage("record_keys/wait.png")
+        cv.NamedWindow("Record", cv.CV_WINDOW_AUTOSIZE)
 
     def process_touches(self, touches):
         if len(touches) == 0:
@@ -26,9 +29,11 @@ class Record_keys:
                 self.record_key_finished = False
                 pos = int(touches[0][Touch.POSITION])
                 print "Waiting for key"
+                cv.ShowImage("Record", self.record_img)
                 key = cv.WaitKey(0)
                 if key != 27: # Esc
                     self.keymap[pos] = key
+                cv.ShowImage("Record", self.wait_img)
     
     def shutdown(self):
         print self.keymap
@@ -46,7 +51,7 @@ class Play_keys:
         else:
             self.keymap = pickle.load(open("keymap.pickle"))
 
-        self.Threshold = self.calc_min_distance(self.keymap) / 2
+        self.Threshold = self.calc_min_distance(self.keymap) / 2 
         print self.Threshold
         self.pressed_map_old = []
 
@@ -54,9 +59,14 @@ class Play_keys:
        pressed_map_new = []
        for touch in touches:
            # TODO:  get key from keymap
+           min_dist = 9999
+           nearest_keypos = 9999
            for keypos in self.keymap:
-               if abs(touch[Touch.POSITION] - keypos) < self.Threshold :
-                   pressed_map_new.append(self.keymap[keypos])
+               dist = abs(touch[Touch.POSITION] - keypos) 
+               if dist < min_dist:
+                   nearest_keypos = keypos
+                   min_dist = dist
+           pressed_map_new.append(self.keymap[nearest_keypos])
        if self.Autorepeat == True:
            for key in pressed_map_new:
                    print "type", key
@@ -192,7 +202,9 @@ class Tcp:
         self.server.start()
         self.old_touch = 0
         self.start_touch_pos = 0
-        self.threshold = 2 
+        self.threshold = 0 
+        self.touch_average = 20
+        self.touch_history = []
 
     def transmit(self, data):
         sent = self.server.send(data)
@@ -210,6 +222,7 @@ class Tcp:
                 self.transmit("release,0,%d,%d\r\n" % (self.old_touch,0))
                 self.old_touch = 0 # FIXME: need to compensate tracking blackouts
                 self.start_touch_pos = 0
+                self.touch_history = []
             if len(touches) == 1:
                 if self.old_touch == 0: # new touch
                     self.transmit("touch,0,%d,%d\r\n" % (touches[0][Touch.POSITION],
@@ -220,6 +233,10 @@ class Tcp:
                 else: # move
                     # delta = touches[0][Touch.POSITION] - self.old_touch
                     delta = touches[0][Touch.POSITION] - self.start_touch_pos
+                    self.touch_history.append(delta)
+                    if len(self.touch_history) > self.touch_average:
+                        self.touch_history.pop(0)
+                    delta = sum(self.touch_history) / len(self.touch_history)
                     if abs(delta) > self.threshold:
                         bytes_sent = self.transmit("move,0,%d,%d\r\n" % (delta, touches[0][Touch.AMPLITUDE]))
                     self.old_touch = touches[0][Touch.POSITION]
