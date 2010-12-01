@@ -235,6 +235,7 @@ frame_counter = 0
 
 calibrationTimer = 0
 history = zeros([time_average,640])
+detected_history = zeros([5,2])
 calibrated = zeros(640)
 calibration = zeros(640)
 
@@ -296,16 +297,51 @@ while True:
             
         #correlate
         #correlation = signal.correlate(calibrated, corrSample, mode='same')
-            
+        
+        detection_mode = "single_wire"
+
         #FIND FINGER PRESS
         if detection == 1:
             detected = []
-            for i in range(display[0], display[1]):
-                if ((calibrated[i] > threshold) and ((derivative[i] > 0 and derivative[i+1] <= 0))): #or (derivative[i] >= 0 and derivative[i+1] < 0)
-                    cv.Line(imageColor, (i,0), (i,480), (125,125,125))
-                    percentage = float(i - display[0]) / float(display[1] - display[0])
-                    detected.append((i, percentage, calibrated[i]))
-                    #os.system('beep -f 200 -l 0.1')
+            if detection_mode == "single_wire":
+                for i in range(display[0], display[1]):
+                    if (calibrated[i] > threshold): #or (derivative[i] >= 0 and derivative[i+1] < 0)
+                        percentage = float(i - display[0]) / float(display[1] - display[0])
+                        detected.append((i, percentage, calibrated[i]))
+                        detected_history = roll(detected_history, -1, 0)
+                        detected_history[-1] = [i, calibrated[i]]
+                        #cv.Line(imageColor, (i,0), (i,480), (125,125,125))
+                        break
+                if (len(detected) == 0):
+                    detected_history = roll(detected_history, -1, 0)
+                    detected_history[-1] = [-1, -1]
+                single_avg = 0
+                single_val = 0
+                count = 0
+                num_zeros = 0
+                for k in detected_history:
+                    if k[1] == -1:
+                        num_zeros += 1
+                    else:
+                        single_avg += k[0]
+                        single_val += k[1]
+                        count += 1
+                if count > 0:
+                    single_avg = int(single_avg/ count)
+                    single_val = int(single_val/ count)
+                    percentage = float(single_avg - display[0]) / float(display[1] - display[0])
+                    detected = []
+                    detected.append((single_avg, percentage, single_val))
+                    cv.Line(imageColor, (single_avg,0), (single_avg,480), (255,255,255))
+            else:
+                for i in range(display[0], display[1]):
+                    if ((calibrated[i] > threshold) and ((derivative[i] > 0 and derivative[i+1] <= 0))): #or (derivative[i] >= 0 and derivative[i+1] < 0)
+                        cv.Line(imageColor, (i,0), (i,480), (125,125,125))
+                        percentage = float(i - display[0]) / float(display[1] - display[0])
+                        detected.append((i, percentage, calibrated[i]))
+                        #os.system('beep -f 200 -l 0.1')
+            for touch in detected:
+                cv.Line(imageColor, (touch[Touch.POSITION],0), (touch[Touch.POSITION],480), (255,255,255))
         
 
         # remove erroneous touches
@@ -321,8 +357,6 @@ while True:
         #    detected.sort(key=lambda t: t[2], reverse = True)
         #    detected = detected[:max_touches]
 
-        for touch in detected:
-            cv.Line(imageColor, (touch[Touch.POSITION],0), (touch[Touch.POSITION],480), (255,255,255))
 
         #PRINT TRACES
         if traces == 1:
