@@ -67,8 +67,9 @@ def drawGrid(image):
     #baseline
     cv.Line(image, (display[0],240), (display[1],240), (255,255,255))
     #range
-    cv.Line(image, (display[0],0), (display[0],480), (0,255,0))
-    cv.Line(image, (display[1],0), (display[1],480), (0,0,255))
+    if traces == 1:
+        cv.Line(image, (display[0],0), (display[0],480), (0,255,0))
+        cv.Line(image, (display[1],0), (display[1],480), (0,0,255))
     #threshold
     cv.Line(image, (0,240+threshold), (640,240+threshold), (128,128,128))
 
@@ -127,6 +128,16 @@ def autorange(calibrated):
 
 ####################### START #####################
 
+max_touches = 1000
+shot = 0
+pause = 0
+grid = 1
+traces = 0
+detection = 0
+pixelmask = [(98, 187), (106, 240), (120, 425), (133, 238), (519, 199)]
+detected = []
+markers = []
+
 #GUI
 window = cv.NamedWindow("TDR", cv.CV_WINDOW_AUTOSIZE)
 window = cv.NamedWindow("Settings", cv.CV_WINDOW_AUTOSIZE)
@@ -139,6 +150,7 @@ if len(sys.argv) > 1:
 else: 
     mode = "analyze"
     demo = None
+
 
 # load settings
 
@@ -215,17 +227,11 @@ def change_touch_average(val):
     touch_average = val+1
 cv.CreateTrackbar("touch_average", "Settings", touch_average, 50, change_touch_average)
 
-max_touches = 1000 
-shot = 0
-pause = 0
-grid = 1
-traces = 0
-detection = 0
-pixelmask = [(98, 187), (106, 240), (120, 425), (133, 238), (519, 199)]
-detected = []
-markers = []
 
 topicName = ""
+recording = False
+video_filebase = ""
+frame_counter = 0
 
 calibrationTimer = 0
 history = zeros([time_average,640])
@@ -305,8 +311,8 @@ while True:
         # remove erroneous touches
         # maximum of n touches, (merge similar touches), etc.
 
-        #min_touch_dist = 10 # config!
-        #merge_mode = "mean" # or "mean"
+        min_touch_dist = 0 # config!
+        merge_mode = "max" # or "mean"
 
         # assumes that detected is sorted by Touch.POSITION:
         #if len(detected) > 0:
@@ -329,6 +335,12 @@ while True:
         
         for i in markers:
             cv.Line(imageColor, (i,0), (i,480), (75,75,150))
+        if recording:
+            cv.SaveImage(video_filebase + "_%06d.png" % (frame_counter), imageColor)
+            cv.SaveImage(video_filebase + "_raw_%06d.png" % (frame_counter), img)
+            frame_counter += 1
+            cv.Circle(imageColor, (610, 30), 10, (0,0,255),-1)
+        
         #SHOW
         cv.ShowImage("TDR",imageColor)
 
@@ -392,6 +404,14 @@ while True:
         for setting in settings:
             exec(setting + ' = settings["'+ setting + '"]')
             #exec('cv.SetTrackbarPos("' + setting + '","Settings", settings["' + setting + '"])') 
+    if key == ord('r'):
+        recording = not recording
+        if recording:
+            dt = datetime.datetime.now()
+            frame_counter = 0
+            if not os.path.exists("shots/" + dt.strftime("%Y-%m-%d")):
+                os.mkdir("shots/" + dt.strftime("%Y-%m-%d"))
+            video_filebase = "shots/" + dt.strftime("%Y-%m-%d") + "/" + dt.strftime("%Y-%m-%d %H:%M:%S") + "_shot_"+str(shot)+"_("+mode+")"
     if key == ord('t'):
         if traces == 1: traces = 0
         else: traces = 1
