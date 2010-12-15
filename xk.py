@@ -174,6 +174,12 @@ def send_string(str) :
             window.send_event(event, propagate = True)
     display.sync()
 
+def press_button(button):
+    Xlib.ext.xtest.fake_input(display, Xlib.X.ButtonPress, button) 
+    display.sync()
+    Xlib.ext.xtest.fake_input(display, Xlib.X.ButtonRelease, button) 
+    display.sync()
+
 if __name__ == "__main__":
     for argp in range(1, len(sys.argv)) :
         send_string(sys.argv[argp])
