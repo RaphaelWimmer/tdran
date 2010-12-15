@@ -298,7 +298,8 @@ while True:
         #correlate
         #correlation = signal.correlate(calibrated, corrSample, mode='same')
         
-        detection_mode = "single_wire"
+        #detection_mode = "single_wire"
+        detection_mode = "multitouch"
 
         #FIND FINGER PRESS
         if detection == 1:
