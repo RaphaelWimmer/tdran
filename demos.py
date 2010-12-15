@@ -3,6 +3,7 @@
 import os
 import xk
 from Xlib import XK
+from pymouse import PyMouse
 import cv   #using opencv 2.0 ctype python bindings
 from utils import *
 import pickle
@@ -89,6 +90,39 @@ class Play_keys:
         pos_a = sorted(keymap.keys())
         pos_b = pos_a[1:]
         return min(map(lambda x,y:abs(x-y), pos_b, pos_a[:-1]))
+
+class Scroll_wheel:
+    
+    Autorepeat = False
+
+    def __init__(self, params = None):
+        self.old_pos = -1.0
+        self.new_pos = -1.0
+#        self.mouse = PyMouse()
+
+    def process_touches(self, touches):
+        if len(touches) == 0:
+            self.old_pos = -1.0
+            self.new_pos = -1.0
+        else:
+            self.new_pos = touches[0][Touch.PERCENTAGE]
+            if self.old_pos != -1:
+                moved = self.new_pos - self.old_pos
+                if abs(moved) > 0.05: # arbitrary threshold
+                    if moved > 0.0:
+                        print "UP"
+ #                       self.mouse.click(1,1,4)
+                        xk.press_button(4)
+                    else:
+                        print "DOWN"
+                        xk.press_button(5)
+                    self.old_pos = self.new_pos
+            else:
+                self.old_pos = self.new_pos
+    
+    def shutdown(self):
+        pass
+
 
 class Headphones:
 
