@@ -164,7 +164,7 @@ DEFAULTS = {
     "mask_average"        : 30,
     "touch_average"       : 1,
     "single_wire_mode"    : 0
- }
+}
 
 if os.access(mode + ".pickle", os.R_OK):
     settings = pickle.load(open(mode + ".pickle"))

@@ -108,7 +108,7 @@ class Scroll_wheel:
             self.new_pos = touches[0][Touch.PERCENTAGE]
             if self.old_pos != -1:
                 moved = self.new_pos - self.old_pos
-                if abs(moved) > 0.05: # arbitrary threshold
+                if abs(moved) > 0.01: # arbitrary threshold
                     if moved > 0.0:
                         print "UP"
  #                       self.mouse.click(1,1,4)
