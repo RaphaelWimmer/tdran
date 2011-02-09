@@ -449,3 +449,67 @@ class Recordidentification:
         for touch in touches:
             pattern.append(touch[Touch.POSITION])
         return pattern
+
+class Slider:
+
+    def __init__(self, params = None):
+        cv.NamedWindow("Slider", cv.CV_WINDOW_AUTOSIZE)
+        self.value = 0
+        self.started = False
+        self.completed = False
+        self.img_slider = cv.LoadImage("slider_bg.png")
+        cv.Rectangle(self.img_slider,(0,250), (800,350), (255,255,255), cv.CV_FILLED)
+        cv.ShowImage("Slider", self.img_slider)
+
+    def process_touches(self, touches):
+        if len(touches) == 1:
+            for touch in touches:
+                self.value = touch[Touch.PERCENTAGE]
+                cv.Rectangle(self.img_slider,(0,250), (800,350), (255,255,255), cv.CV_FILLED)
+                cv.Rectangle(self.img_slider,(5,255), (790 * self.value + 5 ,345), (0,0,0), cv.CV_FILLED)
+                cv.ShowImage("Slider", self.img_slider)
+        elif len(touches) > 1:
+            print "multiple touches"
+
+    def shutdown(self):
+        pass
+
+class Slidergame:
+
+    def __init__(self, params = None):
+        cv.NamedWindow("Slider", cv.CV_WINDOW_AUTOSIZE)
+        self.value = 0
+        self.started = False
+        self.completed = False
+        self.img_slider = cv.LoadImage("slider_bg.png")
+        self.img_complete = cv.LoadImage("slider_complete.png")
+        self.img_failed = cv.LoadImage("slider_failed.png")
+        cv.Rectangle(self.img_slider,(0,250), (800,350), (255,255,255), cv.CV_FILLED)
+        cv.ShowImage("Slider", self.img_slider)
+
+    def process_touches(self, touches):
+        if len(touches) >= 1:
+            self.value = touches[0][Touch.PERCENTAGE]
+            if (not self.started) and self.value < 0.10: # begin new game
+                self.started = True
+                self.completed = False
+            if self.started:
+                cv.Rectangle(self.img_slider,(0,250), (800,350), (255,255,255), cv.CV_FILLED)
+                cv.Rectangle(self.img_slider,(5,255), (790 * self.value + 5 ,345), (0,0,0), cv.CV_FILLED)
+                cv.ShowImage("Slider", self.img_slider)
+                if self.value > 0.85:
+                    self.completed = True
+                    self.started = False
+                    cv.ShowImage("Slider", self.img_complete)
+        elif self.started:
+            if self.value > 0.90:
+                self.completed = True
+                self.started = False
+                cv.ShowImage("Slider", self.img_complete)
+            else:
+                self.completed = True
+                self.started = False
+                cv.ShowImage("Slider", self.img_failed)
+
+    def shutdown(self):
+        pass
