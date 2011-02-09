@@ -20,6 +20,10 @@ import demos
 
 # DEFINES
 
+MODE_TOUCHES = 0
+MODE_SINGLEWIRE = 1
+MODE_RAW = 2
+
 def process_touches(touches):
     if demo:
         demo.process_touches(touches)
@@ -163,7 +167,7 @@ DEFAULTS = {
     "trace_average"       : 30,
     "mask_average"        : 30,
     "touch_average"       : 1,
-    "single_wire_mode"    : 0
+    "detection_mode"      : MODE_TOUCHES # alternatives: MODE_SINGLEWIRE, MODE_RAW
 }
 
 if os.access(mode + ".pickle", os.R_OK):
@@ -228,11 +232,11 @@ def change_touch_average(val):
     touch_average = val+1
 cv.CreateTrackbar("touch_average", "Settings", touch_average, 50, change_touch_average)
 
-single_wire_mode = settings["single_wire_mode"]
-def change_single_wire_mode(val):
-    global single_wire_mode
-    single_wire_mode = val
-cv.CreateTrackbar("Single Wire Mode", "Settings", single_wire_mode, 1, change_single_wire_mode)
+detection_mode = settings["detection_mode"]
+def change_detection_mode(val):
+    global detection_mode
+    detection_mode = val
+cv.CreateTrackbar("Detection Mode", "Settings", detection_mode, 2, change_detection_mode)
 
 topicName = ""
 recording = False
@@ -307,7 +311,9 @@ while True:
         #FIND FINGER PRESS
         if detection == 1:
             detected = []
-            if single_wire_mode == 1:
+            if detection_mode == MODE_RAW:
+                pass
+            elif detection_mode == MODE_SINGLEWIRE:
                 for i in range(display[0], display[1]):
                     if (calibrated[i] > threshold): #or (derivative[i] >= 0 and derivative[i+1] < 0)
                         percentage = float(i - display[0]) / float(display[1] - display[0])
@@ -337,7 +343,7 @@ while True:
                     detected = []
                     detected.append((single_avg, percentage, single_val))
                     cv.Line(imageColor, (single_avg,0), (single_avg,480), (255,255,255))
-            else: # ! single_wire_mode
+            else: # touches mode
                 for i in range(display[0], display[1]):
                     if ((calibrated[i] > threshold) and ((derivative[i] > 0 and derivative[i+1] <= 0))): #or (derivative[i] >= 0 and derivative[i+1] < 0)
                         cv.Line(imageColor, (i,0), (i,480), (125,125,125))
