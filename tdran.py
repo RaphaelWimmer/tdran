@@ -208,7 +208,7 @@ trace_average = settings["trace_average"]
 def change_trace_average(val):
     global trace_average
     trace_average = val+1
-cv.CreateTrackbar("trace_average", "Settings", trace_average, 50, change_trace_average)
+cv.CreateTrackbar("trace_average", "Settings", trace_average, 500, change_trace_average)
 
 mask_average = settings["mask_average"]
 def change_mask_average(val):
