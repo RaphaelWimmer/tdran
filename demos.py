@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import os
+import time
 import xk
 from Xlib import XK
 from pymouse import PyMouse
@@ -227,7 +228,6 @@ class Piano:
     def shutdown(self):
         synth.stop_synth()
 
-
 class Tcp:
 
     def __init__(self, params = ("",2345)):
@@ -326,3 +326,126 @@ class TCP_Server(Thread):
             return True
         else:
             return False
+
+class Identification:
+    
+
+    def __init__(self, params = None):
+        if params:
+            self.ids = pickle.load(open(params))
+        else:
+            try:
+                self.ids = pickle.load(open("ids.pickle"))
+            except:        
+                self.ids = {}
+                
+        self.THRESHOLD = 10 # pixels 
+        self.old_id = 0
+        self.no_img = cv.LoadImage("id_no_output.png")
+        self.earphones_img = cv.LoadImage("id_earphones.png")
+        self.headphones_img = cv.LoadImage("id_headphones.png")
+        self.loudspeaker_img = cv.LoadImage("id_loudspeaker.png")
+        self.images = [self.no_img,
+                       self.headphones_img,
+                       self.earphones_img,
+                       self.loudspeaker_img ]
+        cv.NamedWindow("Identify", cv.CV_WINDOW_AUTOSIZE)
+        cv.ShowImage("Identify", self.images[0])
+
+    def process_touches(self, touches):
+        #if len(touches) == 0 or len(touches) > 3:
+        #    return
+        #else: 
+            pat_id = self.match_pattern(touches) 
+            # check if pattern has been recorded before
+            if pat_id == None:
+                pat_id = 0 # show id_no_output.png
+            if pat_id != self.old_id:
+                print "Found Pattern:", pat_id
+                cv.ShowImage("Identify", self.images[pat_id])
+            self.old_id = pat_id
+                
+    
+    def shutdown(self):
+        pass
+
+    def match_pattern(self, touches):
+        pattern = self.to_pattern(touches)
+        for pat_id in self.ids.keys():
+            pat = self.ids[pat_id]
+            match = 1
+            for i in range(min(len(pattern),len(pat))):
+                if abs(pattern[i] - pat[i]) > self.THRESHOLD:
+                    match = 0
+                    break
+            if match == 1 and len(pattern) == len(pat):
+                return pat_id
+        return None
+
+    def to_pattern(self, touches):
+        pattern = []
+        for touch in touches:
+            pattern.append(touch[Touch.POSITION])
+        return pattern
+
+class Recordidentification:
+
+    def __init__(self, params = None):
+        if params:
+            self.ids = pickle.load(open(params))
+        else:
+            try:
+                self.ids = pickle.load(open("ids.pickle"))
+            except:        
+                self.ids = {}
+                
+        self.THRESHOLD = 10 # pixels 
+        self.record_img = cv.LoadImage("record_keys/record.png")
+        self.wait_img = cv.LoadImage("record_keys/wait.png")
+        cv.NamedWindow("Record", cv.CV_WINDOW_AUTOSIZE)
+
+    def process_touches(self, touches):
+        if len(touches) == 0 or len(touches) > 3:
+            return
+        else: 
+            pat_id = self.match_pattern(touches) 
+            # check if pattern has been recorded before
+            if pat_id == None:
+                # no - record it.
+                pos = int(touches[0][Touch.POSITION])
+                print "Waiting for key"
+                cv.ShowImage("Record", self.record_img)
+                key = cv.WaitKey(0)
+                if key != 27: # Esc
+                    self.add_id(touches, int(chr(key)))
+                cv.ShowImage("Record", self.wait_img)
+            else:
+                print "Pattern:", pat_id
+    
+    def shutdown(self):
+        print self.ids
+        # save it
+        pickle.dump(self.ids, open("ids.pickle","w"))
+
+    def match_pattern(self, touches):
+        pattern = self.to_pattern(touches)
+        for pat_id in self.ids.keys():
+            pat = self.ids[pat_id]
+            match = 1
+            for i in range(min(len(pattern),len(pat))):
+                if abs(pattern[i] - pat[i]) > self.THRESHOLD:
+                    match = 0
+                    break
+            if match == 1 and len(pattern) == len(pat):
+                return pat_id
+        return None
+
+    def add_id(self, touches, pat_id):
+        pattern = self.to_pattern(touches)
+        self.ids[pat_id] = self.to_pattern(touches)
+
+    def to_pattern(self, touches):
+        pattern = []
+        for touch in touches:
+            pattern.append(touch[Touch.POSITION])
+        return pattern
