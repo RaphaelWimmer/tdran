@@ -341,10 +341,10 @@ class Identification:
                 
         self.THRESHOLD = 10 # pixels 
         self.old_id = 0
-        self.no_img = cv.LoadImage("id_no_output.png")
-        self.earphones_img = cv.LoadImage("id_earphones.png")
-        self.headphones_img = cv.LoadImage("id_headphones.png")
-        self.loudspeaker_img = cv.LoadImage("id_loudspeaker.png")
+        self.no_img = cv.LoadImage("identification/id_no_output.png")
+        self.earphones_img = cv.LoadImage("identification/id_earphones.png")
+        self.headphones_img = cv.LoadImage("identification/id_headphones.png")
+        self.loudspeaker_img = cv.LoadImage("identification/id_loudspeaker.png")
         self.images = [self.no_img,
                        self.headphones_img,
                        self.earphones_img,
@@ -457,7 +457,7 @@ class Slider:
         self.value = 0
         self.started = False
         self.completed = False
-        self.img_slider = cv.LoadImage("slider_bg.png")
+        self.img_slider = cv.LoadImage("slider/slider_bg.png")
         cv.Rectangle(self.img_slider,(0,250), (800,350), (255,255,255), cv.CV_FILLED)
         cv.ShowImage("Slider", self.img_slider)
 
@@ -481,9 +481,9 @@ class Slidergame:
         self.value = 0
         self.started = False
         self.completed = False
-        self.img_slider = cv.LoadImage("slider_bg.png")
-        self.img_complete = cv.LoadImage("slider_complete.png")
-        self.img_failed = cv.LoadImage("slider_failed.png")
+        self.img_slider = cv.LoadImage("slider/slider_bg.png")
+        self.img_complete = cv.LoadImage("slider/slider_complete.png")
+        self.img_failed = cv.LoadImage("slider/slider_failed.png")
         cv.Rectangle(self.img_slider,(0,250), (800,350), (255,255,255), cv.CV_FILLED)
         cv.ShowImage("Slider", self.img_slider)
 
@@ -510,6 +510,27 @@ class Slidergame:
                 self.completed = True
                 self.started = False
                 cv.ShowImage("Slider", self.img_failed)
+
+    def shutdown(self):
+        pass
+
+class Grasp:
+
+    def __init__(self, params = None):
+        cv.NamedWindow("Grasp", cv.CV_WINDOW_AUTOSIZE)
+        self.img_bg = cv.LoadImage("grasp/siemens_cxt70.jpg")
+        self.img = cv.LoadImage("grasp/siemens_cxt70.jpg")
+        cv.ShowImage("Grasp", self.img)
+
+    def process_touches(self, touches):
+        #cv.CvtColor(self.img_bg, self.img)
+        self.img = cv.CloneImage(self.img_bg)
+        for touch in touches:
+            val = abs(int(touch[Touch.AMPLITUDE]))
+            pos = int(touch[Touch.PERCENTAGE] * self.img_bg.width)
+            width = self.img.width / len(touches)
+            cv.Rectangle(self.img, (pos,0), (pos + width, val), (255,125,125), cv.CV_FILLED)
+        cv.ShowImage("Grasp", self.img)
 
     def shutdown(self):
         pass
