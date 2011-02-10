@@ -457,7 +457,7 @@ class Slider:
         self.value = 0
         self.started = False
         self.completed = False
-        self.img_slider = cv.LoadImage("slider_bg.png")
+        self.img_slider = cv.LoadImage("slider/slider_bg.png")
         cv.Rectangle(self.img_slider,(0,250), (800,350), (255,255,255), cv.CV_FILLED)
         cv.ShowImage("Slider", self.img_slider)
 
@@ -481,9 +481,9 @@ class Slidergame:
         self.value = 0
         self.started = False
         self.completed = False
-        self.img_slider = cv.LoadImage("slider_bg.png")
-        self.img_complete = cv.LoadImage("slider_complete.png")
-        self.img_failed = cv.LoadImage("slider_failed.png")
+        self.img_slider = cv.LoadImage("slider/slider_bg.png")
+        self.img_complete = cv.LoadImage("slider/slider_complete.png")
+        self.img_failed = cv.LoadImage("slider/slider_failed.png")
         cv.Rectangle(self.img_slider,(0,250), (800,350), (255,255,255), cv.CV_FILLED)
         cv.ShowImage("Slider", self.img_slider)
 
