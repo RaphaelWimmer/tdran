@@ -518,18 +518,43 @@ class Grasp:
 
     def __init__(self, params = None):
         cv.NamedWindow("Grasp", cv.CV_WINDOW_AUTOSIZE)
+        cv.NamedWindow("Grasp Settings", cv.CV_WINDOW_AUTOSIZE)
+        self.top_right = 45
+        self.top_left = 60
+        self.left = 333
+        self.right = 570
+        self.top = 562
+        cv.CreateTrackbar("Top Right", "Grasp Settings", self.top_right, 100, self.change_top_right)
+        cv.CreateTrackbar("Top Left", "Grasp Settings", self.top_left, 100, self.change_top_left)
+
         self.img_bg = cv.LoadImage("grasp/siemens_cxt70.jpg")
         self.img = cv.LoadImage("grasp/siemens_cxt70.jpg")
+        
         cv.ShowImage("Grasp", self.img)
 
+    def change_top_right(self, val):
+        self.top_right = val
+
+    def change_top_left(self, val):
+        self.top_left = val
+
     def process_touches(self, touches):
-        #cv.CvtColor(self.img_bg, self.img)
         self.img = cv.CloneImage(self.img_bg)
         for touch in touches:
             val = abs(int(touch[Touch.AMPLITUDE]))
-            pos = int(touch[Touch.PERCENTAGE] * self.img_bg.width)
-            width = self.img.width / len(touches)
-            cv.Rectangle(self.img, (pos,0), (pos + width, val), (255,125,125), cv.CV_FILLED)
+            if touch[Touch.PERCENTAGE] * 100 < self.top_right:
+                pos = int((touch[Touch.PERCENTAGE] * 100 / self.top_right) * self.top)
+                width = self.top / (len(touches) * self.top_right / 100.0)
+                cv.Rectangle(self.img, (self.right, self.img.height - (pos - width/2)), (self.right + val, self.img.height - (pos + width/2)), (255,125,125), cv.CV_FILLED)
+            elif touch[Touch.PERCENTAGE] * 100 <= self.top_left:
+                pos = int((touch[Touch.PERCENTAGE] * 100 - self.top_right) / (self.top_left - self.top_right) * (self.right - self.left))
+                width = (self.right - self.left) / (len(touches) * (self.top_left - self.top_right) / 100.0)
+                cv.Rectangle(self.img, (self.right - (pos - width/2), self.img.height - self.top), (self.right - (pos + width/2), self.img.height - (self.top + val)), (255,125,255), cv.CV_FILLED)
+            else: # > self.top_left
+                pos = int((touch[Touch.PERCENTAGE] * 100 - self.top_left) / (100 - self.top_left) * self.top)
+                width = self.top / (len(touches) * (100 - self.top_left) / 100.0)
+                cv.Rectangle(self.img, (self.left, self.img.height - self.top + pos - width/2), (self.left - val, self.img.height - self.top + (pos + width/2)), (125,255,125), cv.CV_FILLED)
+
         cv.ShowImage("Grasp", self.img)
 
     def shutdown(self):
