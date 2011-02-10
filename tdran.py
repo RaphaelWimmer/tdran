@@ -132,7 +132,6 @@ def autorange(calibrated):
 
 ####################### START #####################
 
-max_touches = 1000
 shot = 0
 pause = 0
 grid = 1
@@ -167,7 +166,8 @@ DEFAULTS = {
     "trace_average"       : 30,
     "mask_average"        : 30,
     "touch_average"       : 1,
-    "detection_mode"      : MODE_TOUCHES # alternatives: MODE_SINGLEWIRE, MODE_RAW
+    "detection_mode"      : MODE_TOUCHES,
+    "max_touches"         : 100
 }
 
 if os.access(mode + ".pickle", os.R_OK):
@@ -237,6 +237,12 @@ def change_detection_mode(val):
     global detection_mode
     detection_mode = val
 cv.CreateTrackbar("Detection Mode", "Settings", detection_mode, 2, change_detection_mode)
+
+max_touches = settings["max_touches"]
+def change_max_touches(val):
+    global max_touches
+    max_touches = max(val,1)
+cv.CreateTrackbar("Maximum Number of Touches", "Settings", max_touches, 100, change_max_touches)
 
 topicName = ""
 recording = False
@@ -312,7 +318,20 @@ while True:
         if detection == 1:
             detected = []
             if detection_mode == MODE_RAW:
-                pass
+                averaging_width = float(display[1] - display[0]) / max_touches
+                averaging_start = float(display[0])
+                for slot in range(max_touches):
+                    det_pos = (slot + 0.5) * averaging_width + display[0]
+                    det_percentage = (slot + 0.5) / max_touches
+                    averaging_end = averaging_start + averaging_width # float for precision
+                    averaging_samples = calibrated[int(averaging_start):int(averaging_end)]
+                    if len(averaging_samples) > 0:
+                        det_val = int(sum(averaging_samples) / len(averaging_samples))
+                    else:
+                        det_val = 0
+                    detected.append((det_pos,det_percentage,det_val))
+                    cv.Rectangle(imageColor, (int(det_pos-averaging_width/2),240), (int(det_pos+averaging_width/2),240+det_val), (255,125,125), cv.CV_FILLED) 
+                    averaging_start = averaging_end
             elif detection_mode == MODE_SINGLEWIRE:
                 for i in range(display[0], display[1]):
                     if (calibrated[i] > threshold): #or (derivative[i] >= 0 and derivative[i+1] < 0)
@@ -345,13 +364,16 @@ while True:
                     cv.Line(imageColor, (single_avg,0), (single_avg,480), (255,255,255))
             else: # touches mode
                 for i in range(display[0], display[1]):
-                    if ((calibrated[i] > threshold) and ((derivative[i] > 0 and derivative[i+1] <= 0))): #or (derivative[i] >= 0 and derivative[i+1] < 0)
-                        cv.Line(imageColor, (i,0), (i,480), (125,125,125))
+                    if ((calibrated[i] > threshold) and ((derivative[i] > 0 and derivative[i+1] <= 0))): 
+                        # draw a lighter line for touches that are later filtered out
+                        cv.Line(imageColor, (i,0), (i,480), (125,125,125)) 
                         percentage = float(i - display[0]) / float(display[1] - display[0])
                         detected.append((i, percentage, calibrated[i]))
-                        #os.system('beep -f 200 -l 0.1')
-            for touch in detected:
-                cv.Line(imageColor, (touch[Touch.POSITION],0), (touch[Touch.POSITION],480), (255,255,255))
+                        if max_touches < 100: 
+                            detected.sort(key=lambda t: t[2], reverse = True)
+                            detected = detected[:max_touches]
+                for touch in detected:
+                    cv.Line(imageColor, (touch[Touch.POSITION],0), (touch[Touch.POSITION],480), (255,255,255))
         
 
         # remove erroneous touches
