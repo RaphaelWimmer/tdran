@@ -1,0 +1,721 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="800"
+   height="600"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="ids.svg">
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective10" />
+    <inkscape:perspective
+       id="perspective3998"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <filter
+       id="filter4004"
+       inkscape:label="Blueprint"
+       inkscape:menu="Image effects"
+       inkscape:menu-tooltip="Detect color edges and retrace them in blue"
+       height="1"
+       width="1"
+       y="0"
+       x="0"
+       color-interpolation-filters="sRGB">
+      <feColorMatrix
+         id="feColorMatrix4006"
+         type="luminanceToAlpha"
+         result="fbSourceGraphic" />
+      <feFlood
+         id="feFlood4008"
+         flood-color="rgb(134,39,24)"
+         result="result1"
+         in="fbSourceGraphic"
+         flood-opacity="1" />
+      <feComposite
+         id="feComposite4010"
+         in2="fbSourceGraphic"
+         operator="out"
+         result="result2" />
+      <feComposite
+         id="feComposite4012"
+         in2="SourceGraphic"
+         operator="in"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix4024" />
+      <feConvolveMatrix
+         id="feConvolveMatrix4026"
+         order="3 3"
+         kernelMatrix="1 1 1 1 -8 1 1 1 1"
+         in="fbSourceGraphic"
+         divisor="1"
+         targetX="1"
+         targetY="1"
+         preserveAlpha="true"
+         result="result0"
+         bias="0" />
+      <feColorMatrix
+         id="feColorMatrix4028"
+         result="result3"
+         values="-0.15 -0.3 -0.05 0 1 -0.15 -0.3 -0.05 0 1 0 0 0 0 1 0 0 0 1 0" />
+    </filter>
+    <inkscape:perspective
+       id="perspective4038"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <filter
+       id="filter4044"
+       inkscape:label="Blueprint"
+       inkscape:menu="Image effects"
+       inkscape:menu-tooltip="Detect color edges and retrace them in blue"
+       height="1"
+       width="1"
+       y="0"
+       x="0"
+       color-interpolation-filters="sRGB">
+      <feColorMatrix
+         id="feColorMatrix4046"
+         type="luminanceToAlpha"
+         result="fbSourceGraphic" />
+      <feFlood
+         id="feFlood4048"
+         flood-color="rgb(134,39,24)"
+         result="result1"
+         in="fbSourceGraphic"
+         flood-opacity="1" />
+      <feComposite
+         id="feComposite4050"
+         in2="fbSourceGraphic"
+         operator="out"
+         result="result2" />
+      <feComposite
+         id="feComposite4052"
+         in2="SourceGraphic"
+         operator="in"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix4054" />
+      <feConvolveMatrix
+         id="feConvolveMatrix4056"
+         order="3 3"
+         kernelMatrix="1 1 1 1 -8 1 1 1 1"
+         in="fbSourceGraphic"
+         divisor="1"
+         targetX="1"
+         targetY="1"
+         preserveAlpha="true"
+         result="result0"
+         bias="0" />
+      <feColorMatrix
+         id="feColorMatrix4058"
+         result="result3"
+         values="-0.15 -0.3 -0.05 0 1 -0.15 -0.3 -0.05 0 1 0 0 0 0 1 0 0 0 1 0" />
+    </filter>
+    <inkscape:perspective
+       id="perspective4068"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <filter
+       id="filter4074"
+       inkscape:label="Blueprint"
+       inkscape:menu="Image effects"
+       inkscape:menu-tooltip="Detect color edges and retrace them in blue"
+       height="1"
+       width="1"
+       y="0"
+       x="0"
+       color-interpolation-filters="sRGB">
+      <feColorMatrix
+         id="feColorMatrix4076"
+         type="luminanceToAlpha"
+         result="fbSourceGraphic" />
+      <feFlood
+         id="feFlood4078"
+         flood-color="rgb(134,39,24)"
+         result="result1"
+         in="fbSourceGraphic"
+         flood-opacity="1" />
+      <feComposite
+         id="feComposite4080"
+         in2="fbSourceGraphic"
+         operator="out"
+         result="result2" />
+      <feComposite
+         id="feComposite4082"
+         in2="SourceGraphic"
+         operator="in"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix4084" />
+      <feConvolveMatrix
+         id="feConvolveMatrix4086"
+         order="3 3"
+         kernelMatrix="1 1 1 1 -8 1 1 1 1"
+         in="fbSourceGraphic"
+         divisor="1"
+         targetX="1"
+         targetY="1"
+         preserveAlpha="true"
+         result="result0"
+         bias="0" />
+      <feColorMatrix
+         id="feColorMatrix4088"
+         result="result3"
+         values="-0.15 -0.3 -0.05 0 1 -0.15 -0.3 -0.05 0 1 0 0 0 0 1 0 0 0 1 0" />
+    </filter>
+    <inkscape:perspective
+       id="perspective4098"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <filter
+       id="filter4074-1"
+       inkscape:label="Blueprint"
+       inkscape:menu="Image effects"
+       inkscape:menu-tooltip="Detect color edges and retrace them in blue"
+       height="1"
+       width="1"
+       y="0"
+       x="0"
+       color-interpolation-filters="sRGB">
+      <feColorMatrix
+         id="feColorMatrix4076-6"
+         type="luminanceToAlpha"
+         result="fbSourceGraphic" />
+      <feFlood
+         id="feFlood4078-5"
+         flood-color="rgb(134,39,24)"
+         result="result1"
+         in="fbSourceGraphic"
+         flood-opacity="1" />
+      <feComposite
+         id="feComposite4080-6"
+         in2="fbSourceGraphic"
+         operator="out"
+         result="result2" />
+      <feComposite
+         id="feComposite4082-8"
+         in2="SourceGraphic"
+         operator="in"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix4084-1" />
+      <feConvolveMatrix
+         id="feConvolveMatrix4086-4"
+         order="3 3"
+         kernelMatrix="1 1 1 1 -8 1 1 1 1"
+         in="fbSourceGraphic"
+         divisor="1"
+         targetX="1"
+         targetY="1"
+         preserveAlpha="true"
+         result="result0"
+         bias="0" />
+      <feColorMatrix
+         id="feColorMatrix4088-1"
+         result="result3"
+         values="-0.15 -0.3 -0.05 0 1 -0.15 -0.3 -0.05 0 1 0 0 0 0 1 0 0 0 1 0" />
+    </filter>
+    <inkscape:perspective
+       id="perspective4166"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <filter
+       id="filter4004-6"
+       inkscape:label="Blueprint"
+       inkscape:menu="Image effects"
+       inkscape:menu-tooltip="Detect color edges and retrace them in blue"
+       height="1"
+       width="1"
+       y="0"
+       x="0"
+       color-interpolation-filters="sRGB">
+      <feColorMatrix
+         id="feColorMatrix4006-7"
+         type="luminanceToAlpha"
+         result="fbSourceGraphic" />
+      <feFlood
+         id="feFlood4008-3"
+         flood-color="rgb(134,39,24)"
+         result="result1"
+         in="fbSourceGraphic"
+         flood-opacity="1" />
+      <feComposite
+         id="feComposite4010-5"
+         in2="fbSourceGraphic"
+         operator="out"
+         result="result2" />
+      <feComposite
+         id="feComposite4012-2"
+         in2="SourceGraphic"
+         operator="in"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix4024-5" />
+      <feConvolveMatrix
+         id="feConvolveMatrix4026-1"
+         order="3 3"
+         kernelMatrix="1 1 1 1 -8 1 1 1 1"
+         in="fbSourceGraphic"
+         divisor="1"
+         targetX="1"
+         targetY="1"
+         preserveAlpha="true"
+         result="result0"
+         bias="0" />
+      <feColorMatrix
+         id="feColorMatrix4028-2"
+         result="result3"
+         values="-0.15 -0.3 -0.05 0 1 -0.15 -0.3 -0.05 0 1 0 0 0 0 1 0 0 0 1 0" />
+    </filter>
+    <inkscape:perspective
+       id="perspective4213"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <filter
+       id="filter4044-0"
+       inkscape:label="Blueprint"
+       inkscape:menu="Image effects"
+       inkscape:menu-tooltip="Detect color edges and retrace them in blue"
+       height="1"
+       width="1"
+       y="0"
+       x="0"
+       color-interpolation-filters="sRGB">
+      <feColorMatrix
+         id="feColorMatrix4046-8"
+         type="luminanceToAlpha"
+         result="fbSourceGraphic" />
+      <feFlood
+         id="feFlood4048-5"
+         flood-color="rgb(134,39,24)"
+         result="result1"
+         in="fbSourceGraphic"
+         flood-opacity="1" />
+      <feComposite
+         id="feComposite4050-2"
+         in2="fbSourceGraphic"
+         operator="out"
+         result="result2" />
+      <feComposite
+         id="feComposite4052-5"
+         in2="SourceGraphic"
+         operator="in"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix4054-6" />
+      <feConvolveMatrix
+         id="feConvolveMatrix4056-2"
+         order="3 3"
+         kernelMatrix="1 1 1 1 -8 1 1 1 1"
+         in="fbSourceGraphic"
+         divisor="1"
+         targetX="1"
+         targetY="1"
+         preserveAlpha="true"
+         result="result0"
+         bias="0" />
+      <feColorMatrix
+         id="feColorMatrix4058-0"
+         result="result3"
+         values="-0.15 -0.3 -0.05 0 1 -0.15 -0.3 -0.05 0 1 0 0 0 0 1 0 0 0 1 0" />
+    </filter>
+    <inkscape:perspective
+       id="perspective4264"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4289"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4314"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4354"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4354-7"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4354-6"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="13.163533"
+     inkscape:cy="216.97808"
+     inkscape:document-units="px"
+     inkscape:current-layer="g2911"
+     showgrid="false"
+     width="640px"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1438"
+     inkscape:window-height="879"
+     inkscape:window-x="0"
+     inkscape:window-y="19"
+     inkscape:window-maximized="0">
+    <sodipodi:guide
+       orientation="0,1"
+       position="388.57143,102.85714"
+       id="guide3607" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-452.36218)"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       id="rect2819"
+       width="807.14288"
+       height="607.14288"
+       x="-1.4285715"
+       y="-1.4285717"
+       transform="translate(0,452.36218)" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="Earphones"
+     style="display:none"
+     sodipodi:insensitive="true">
+    <image
+       y="-113.28068"
+       x="-1193.8572"
+       id="image4040"
+       height="1577"
+       width="2102"
+       xlink:href="file:///home/raphael/inkscape_pasted_image_20110119_212508.png"
+       style="display:inline;filter:url(#filter4044-0)"
+       transform="matrix(-0.34921685,0,0,0.34921685,501.02365,115.88752)" />
+    <text
+       xml:space="preserve"
+       style="font-size:80.44581604px;font-style:normal;font-weight:normal;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans"
+       x="194.85864"
+       y="91.158142"
+       id="text4252-2-6"><tspan
+         sodipodi:role="line"
+         id="tspan4254-8-8"
+         x="194.85864"
+         y="91.158142"
+         style="font-weight:bold;fill:#ffffff;stroke:none;-inkscape-font-specification:Bitstream Vera Sans Bold">Earphones</tspan></text>
+    <rect
+       style="fill:#ffffff;fill-opacity:0.61061946;stroke:none;display:inline"
+       id="rect2827"
+       width="27.582125"
+       height="531.06488"
+       x="93.143837"
+       y="30.665501" />
+    <rect
+       y="30.665501"
+       x="54.988312"
+       height="531.06488"
+       width="27.582125"
+       id="rect2829"
+       style="fill:#ffffff;fill-opacity:0.61061946;stroke:none;display:inline" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-width:6.03318357;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;display:inline"
+       id="rect2821"
+       width="104.92774"
+       height="93.761787"
+       x="35.393276"
+       y="86.110107"
+       ry="15.714286" />
+    <rect
+       ry="15.714286"
+       y="246.11011"
+       x="35.393276"
+       height="93.761787"
+       width="104.92774"
+       id="rect4342"
+       style="fill:#ffffff;fill-opacity:0.61061946;stroke:#000000;stroke-width:6.03318357;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;display:inline" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0.61061946;stroke:#000000;stroke-width:6.03318357;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;display:inline"
+       id="rect4344"
+       width="104.92774"
+       height="93.761787"
+       x="35.393276"
+       y="406.11011"
+       ry="15.714286" />
+  </g>
+  <g
+     style="display:inline"
+     inkscape:label="empty"
+     id="g2911"
+     inkscape:groupmode="layer">
+    <rect
+       y="30.665501"
+       x="93.143837"
+       height="531.06488"
+       width="27.582125"
+       id="rect2919"
+       style="fill:#ffffff;fill-opacity:0.61061946;stroke:none;display:inline" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0.61061946;stroke:none;display:inline"
+       id="rect2921"
+       width="27.582125"
+       height="531.06488"
+       x="54.988312"
+       y="30.665501" />
+    <rect
+       ry="15.714286"
+       y="86.110107"
+       x="35.393276"
+       height="93.761787"
+       width="104.92774"
+       id="rect2923"
+       style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-width:6.03318357000000027;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;display:inline" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-width:6.03318357000000027;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;display:inline"
+       id="rect2925"
+       width="104.92774"
+       height="93.761787"
+       x="35.393276"
+       y="246.11011"
+       ry="15.714286" />
+    <rect
+       ry="15.714286"
+       y="406.11011"
+       x="35.393276"
+       height="93.761787"
+       width="104.92774"
+       id="rect2927"
+       style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-width:6.03318357000000027;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;display:inline" />
+    <text
+       xml:space="preserve"
+       style="font-size:45.0075264px;font-style:normal;font-weight:bold;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans Bold"
+       x="186.68318"
+       y="304.23862"
+       id="text3701"><tspan
+         sodipodi:role="line"
+         id="tspan3703"
+         x="186.68318"
+         y="304.23862">no output attached</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Headphones"
+     style="display:none"
+     sodipodi:insensitive="true">
+    <image
+       y="545.07642"
+       x="240.78572"
+       id="image4000"
+       height="346"
+       width="347"
+       xlink:href="file:///home/raphael/inkscape_pasted_image_20110119_212209.png"
+       style="fill:none;display:inline;filter:url(#filter4004-6)"
+       transform="matrix(1.7497936,0,0,1.7497936,-221.14557,-874.80004)" />
+    <text
+       xml:space="preserve"
+       style="font-size:80.44581604px;font-style:normal;font-weight:normal;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans"
+       x="194.85864"
+       y="91.158142"
+       id="text4252-2"><tspan
+         sodipodi:role="line"
+         id="tspan4254-8"
+         x="194.85864"
+         y="91.158142"
+         style="font-weight:bold;fill:#ffffff;stroke:none;-inkscape-font-specification:Bitstream Vera Sans Bold">Headphones</tspan></text>
+    <rect
+       style="fill:#ffffff;fill-opacity:0.61061946;stroke:none;display:inline"
+       id="rect2827-7"
+       width="27.582125"
+       height="531.06488"
+       x="93.143837"
+       y="30.665501" />
+    <rect
+       y="30.665501"
+       x="54.988312"
+       height="531.06488"
+       width="27.582125"
+       id="rect2829-4"
+       style="fill:#ffffff;fill-opacity:0.61061946;stroke:none;display:inline" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-width:6.03318357;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;display:inline"
+       id="rect2821-3"
+       width="104.92774"
+       height="93.761787"
+       x="35.393276"
+       y="86.110107"
+       ry="15.714286" />
+    <rect
+       ry="15.714286"
+       y="246.11011"
+       x="35.393276"
+       height="93.761787"
+       width="104.92774"
+       id="rect4342-5"
+       style="fill:#ffffff;fill-opacity:0.61061946;stroke:#000000;stroke-width:6.03318357;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;display:inline" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-width:6.03318357;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;display:inline"
+       id="rect4344-4"
+       width="104.92774"
+       height="93.761787"
+       x="35.393276"
+       y="406.11011"
+       ry="15.714286" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Loudspeaker"
+     style="display:none"
+     sodipodi:insensitive="true">
+    <image
+       y="49.999996"
+       x="186.70329"
+       id="image4070"
+       height="525.71429"
+       width="606.59338"
+       xlink:href="file:///home/raphael/inkscape_pasted_image_20110119_213033.png"
+       style="filter:url(#filter4074-1)" />
+    <text
+       xml:space="preserve"
+       style="font-size:80.44581604px;font-style:normal;font-weight:normal;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="194.85864"
+       y="91.158142"
+       id="text4252"><tspan
+         sodipodi:role="line"
+         id="tspan4254"
+         x="194.85864"
+         y="91.158142"
+         style="font-weight:bold;fill:#ffffff;stroke:none;-inkscape-font-specification:Bitstream Vera Sans Bold">Loudspeaker</tspan></text>
+    <rect
+       style="fill:#ffffff;fill-opacity:0.61061946;stroke:none;display:inline"
+       id="rect2827-1"
+       width="27.582125"
+       height="531.06488"
+       x="93.143837"
+       y="30.665501" />
+    <rect
+       y="30.665501"
+       x="54.988312"
+       height="531.06488"
+       width="27.582125"
+       id="rect2829-7"
+       style="fill:#ffffff;fill-opacity:0.61061946;stroke:none;display:inline" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0.61061946;stroke:#000000;stroke-width:6.03318357;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;display:inline"
+       id="rect2821-2"
+       width="104.92774"
+       height="93.761787"
+       x="35.393276"
+       y="86.110107"
+       ry="15.714286" />
+    <rect
+       ry="15.714286"
+       y="246.11011"
+       x="35.393276"
+       height="93.761787"
+       width="104.92774"
+       id="rect4342-0"
+       style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-width:6.03318357;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;display:inline" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0.61061946;stroke:#000000;stroke-width:6.03318357;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;display:inline"
+       id="rect4344-3"
+       width="104.92774"
+       height="93.761787"
+       x="35.393276"
+       y="406.11011"
+       ry="15.714286" />
+  </g>
+</svg>

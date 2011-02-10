@@ -341,10 +341,10 @@ class Identification:
                 
         self.THRESHOLD = 10 # pixels 
         self.old_id = 0
-        self.no_img = cv.LoadImage("id_no_output.png")
-        self.earphones_img = cv.LoadImage("id_earphones.png")
-        self.headphones_img = cv.LoadImage("id_headphones.png")
-        self.loudspeaker_img = cv.LoadImage("id_loudspeaker.png")
+        self.no_img = cv.LoadImage("identification/id_no_output.png")
+        self.earphones_img = cv.LoadImage("identification/id_earphones.png")
+        self.headphones_img = cv.LoadImage("identification/id_headphones.png")
+        self.loudspeaker_img = cv.LoadImage("identification/id_loudspeaker.png")
         self.images = [self.no_img,
                        self.headphones_img,
                        self.earphones_img,
