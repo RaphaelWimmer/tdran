@@ -474,6 +474,31 @@ class Slider:
     def shutdown(self):
         pass
 
+class Bar:
+
+    def __init__(self, params = None):
+        cv.NamedWindow("Bar", cv.CV_WINDOW_AUTOSIZE)
+        self.value = 0
+        self.width = 20
+        self.height = 100
+        self.started = False
+        self.completed = False
+        self.img_slider = cv.LoadImage("slider/slider_bg.png")
+        cv.ShowImage("Bar", self.img_slider)
+
+    def process_touches(self, touches):
+        if len(touches) == 1:
+            for touch in touches:
+                self.value = touch[Touch.PERCENTAGE]
+                cv.Rectangle(self.img_slider,(0,0), (800,600), (0,0,0), cv.CV_FILLED)
+                cv.Rectangle(self.img_slider,(800 * self.value - self.width/2, (600 - self.height) /2), (800 * self.value + self.width/2, (600 + self.height) /2), (255,255,255), cv.CV_FILLED)
+                cv.ShowImage("Bar", self.img_slider)
+        elif len(touches) > 1:
+            print "multiple touches"
+
+    def shutdown(self):
+        pass
+
 class Slidergame:
 
     def __init__(self, params = None):
