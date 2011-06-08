@@ -145,7 +145,7 @@ class Headphones:
                     self.set_headphone("play")
                else:
                     print "Volume", touch[Touch.PERCENTAGE] / 0.8
-                    self.volume = int(100.0 * touch[Touch.PERCENTAGE] * 1.5)
+                    self.volume = 100 - int(100.0 * touch[Touch.PERCENTAGE] * 1.25)
                     os.spawnlp(os.P_NOWAIT, "amixer", "amixer", "sset", "Master", "%d" % (self.volume))
                     if self.playing:
                         self.set_headphone("playing")
